@@ -1,21 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AI Speech Coach</title>
+  <title>AI Public Speaking Coach</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>AI Public Speaking Coach</h1>
+<div class="container">
 
-<button id="startBtn">Start Recording</button>
-<button id="stopBtn">Stop Recording</button>
+  <h1>🎤 AI Public Speaking Coach</h1>
+  <p class="subtitle">Record your speech and get instant feedback</p>
 
-<p><b>Your Speech:</b></p>
-<div id="transcript"></div>
+  <div class="card">
+    <button id="startBtn" class="start">Start Recording</button>
+    <button id="stopBtn" class="stop">Stop Recording</button>
+  </div>
 
-<p><b>AI Feedback:</b></p>
-<div id="feedback"></div>
+  <div class="card">
+    <h3>Your Speech</h3>
+    <div id="transcript" class="box"></div>
+  </div>
+
+  <div class="card">
+    <h3>AI Feedback</h3>
+    <div id="feedback" class="box"></div>
+  </div>
+
+</div>
 
 <script src="script.js"></script>
 
