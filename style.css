@@ -1,7 +1,7 @@
 /* Page background */
 body {
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #eef2f7, #dfe7f1);
+  background: linear-gradient(120deg, #e0eafc, #cfdef3, #e6f0ff);
   margin: 0;
   padding: 0;
 }
@@ -21,7 +21,7 @@ nav {
 
 nav a {
   text-decoration: none;
-  color: #333;
+  color: #2c3e50;
   font-weight: bold;
   margin: 0 12px;
   font-size: 15px;
@@ -33,30 +33,31 @@ nav a:hover {
 
 /* Title */
 h1 {
-  color: #222;
+  color: #1f2d3d;
   margin-bottom: 5px;
 }
 
 /* Subtitle */
 .subtitle {
-  color: #555;
+  color: #556;
   margin-bottom: 25px;
   font-size: 16px;
 }
 
 /* Card blocks */
 .card {
-  background: white;
+  background: rgba(255, 255, 255, 0.94);
   padding: 22px;
   margin-top: 20px;
   border-radius: 14px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  backdrop-filter: blur(8px);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.12);
 }
 
 /* Text boxes */
@@ -67,7 +68,7 @@ h1 {
   min-height: 60px;
   margin-top: 12px;
   text-align: left;
-  background: #fafbfc;
+  background: #f8faff;
   line-height: 1.5;
 }
 
@@ -84,21 +85,21 @@ button {
 
 /* Start button */
 .start {
-  background: #28a745;
+  background: linear-gradient(135deg, #28a745, #34d058);
   color: white;
-  box-shadow: 0 4px 10px rgba(40,167,69,0.3);
+  box-shadow: 0 6px 14px rgba(40,167,69,0.35);
 }
 
 /* Stop button */
 .stop {
-  background: #dc3545;
+  background: linear-gradient(135deg, #dc3545, #ff5a6a);
   color: white;
-  box-shadow: 0 4px 10px rgba(220,53,69,0.3);
+  box-shadow: 0 6px 14px rgba(220,53,69,0.35);
 }
 
 /* Hover effects */
 button:hover {
-  opacity: 0.95;
+  opacity: 0.96;
   transform: translateY(-1px);
 }
 
