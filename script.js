@@ -6,7 +6,7 @@ recognition.continuous = true;
 
 let finalText = "";
 
-const BACKEND_URL = "https://YOUR-APP-NAME.onrender.com";
+const BACKEND_URL = "https://speech-ai-website-1.onrender.com";
 
 recognition.onresult = function(event) {
   finalText = "";
