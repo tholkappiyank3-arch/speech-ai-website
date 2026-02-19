@@ -6,7 +6,8 @@ recognition.continuous = true;
 
 let finalText = "";
 
-// 🎤 Capture speech
+const BACKEND_URL = "https://YOUR-APP-NAME.onrender.com";
+
 recognition.onresult = function(event) {
   finalText = "";
   for (let i = 0; i < event.results.length; i++) {
@@ -15,7 +16,6 @@ recognition.onresult = function(event) {
   transcriptDiv.innerText = finalText;
 };
 
-// ▶ Start recording
 document.getElementById("startBtn").onclick = () => {
   finalText = "";
   transcriptDiv.innerText = "";
@@ -23,13 +23,11 @@ document.getElementById("startBtn").onclick = () => {
   recognition.start();
 };
 
-// ⏹ Stop recording → send to backend
 document.getElementById("stopBtn").onclick = () => {
   recognition.stop();
   getAIFeedback(finalText);
 };
 
-// 🔊 Speak feedback
 function speakFeedback(text) {
   const speech = new SpeechSynthesisUtterance(text);
   speech.lang = "en-US";
@@ -37,9 +35,7 @@ function speakFeedback(text) {
   window.speechSynthesis.speak(speech);
 }
 
-// 🧠 SEND TEXT TO BACKEND PROXY
 async function getAIFeedback(text) {
-
   if (!text || text.trim() === "") {
     feedbackDiv.innerText = "No speech detected.";
     return;
@@ -48,8 +44,7 @@ async function getAIFeedback(text) {
   feedbackDiv.innerText = "Analyzing with AI...";
 
   try {
-
-    const response = await fetch("http://localhost:3000/ai", {
+    const response = await fetch(`${BACKEND_URL}/ai`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -58,12 +53,11 @@ async function getAIFeedback(text) {
     });
 
     const data = await response.json();
-
     feedbackDiv.innerText = data.reply;
     speakFeedback(data.reply);
 
   } catch (error) {
-    feedbackDiv.innerText = "Backend not reachable. Is server running?";
+    feedbackDiv.innerText = "Backend not reachable. Is the server running?";
     console.error(error);
   }
 }
