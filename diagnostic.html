@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confidex — Diagnostic Test</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .quiz-wrap { animation: fadeUp 0.6s ease both; }
+
+    .progress-bar-bg {
+      background: rgba(99,102,241,0.12);
+      border-radius: 99px;
+      height: 8px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    .q-number { font-size: 0.8rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .q-category { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 3px 12px; border-radius: 99px; margin-bottom: 14px; }
+    .cat-grammar { background: rgba(99,102,241,0.12); color: #6366f1; }
+    .cat-vocabulary { background: rgba(34,211,238,0.12); color: #0891b2; }
+    .cat-pronunciation { background: rgba(251,146,60,0.15); color: #ea580c; }
+    .cat-clarity { background: rgba(34,197,94,0.12); color: #16a34a; }
+
+    .q-text { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 22px; line-height: 1.5; }
+
+    .options { display: flex; flex-direction: column; gap: 12px; }
+
+    .option {
+      background: rgba(255,255,255,0.7);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .option:hover { border-color: var(--primary); background: rgba(99,102,241,0.07); transform: translateX(4px); }
+    .option.correct { border-color: #22c55e; background: rgba(34,197,94,0.1); color: #15803d; }
+    .option.wrong { border-color: #ef4444; background: rgba(239,68,68,0.1); color: #dc2626; }
+    .option.disabled { pointer-events: none; }
+
+    .next-btn {
+      display: none;
+      margin-top: 20px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* Results */
+    .result-wrap { text-align: center; animation: fadeUp 0.7s ease both; }
+    .score-circle {
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 12px 40px rgba(99,102,241,0.35);
+    }
+    .score-num { font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800; color: white; line-height: 1; }
+    .score-label { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.8); }
+
+    .level-badge {
+      display: inline-block;
+      font-size: 1.1rem; font-weight: 800;
+      padding: 10px 28px; border-radius: 99px;
+      margin-bottom: 20px;
+    }
+    .level-beginner { background: rgba(239,68,68,0.12); color: #dc2626; border: 2px solid rgba(239,68,68,0.25); }
+    .level-intermediate { background: rgba(251,146,60,0.12); color: #ea580c; border: 2px solid rgba(251,146,60,0.25); }
+    .level-advanced { background: rgba(34,197,94,0.12); color: #16a34a; border: 2px solid rgba(34,197,94,0.25); }
+
+    .result-msg { font-size: 1rem; color: var(--text-muted); line-height: 1.7; max-width: 420px; margin: 0 auto 28px; }
+
+    .section-scores { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 24px 0; text-align: left; }
+    .section-score-item {
+      background: rgba(255,255,255,0.7);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .section-score-item .s-label { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
+    .section-score-item .s-val { font-size: 1.3rem; font-weight: 900; color: var(--primary); }
+
+    .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(99,102,241,0.1);
+      color: var(--primary); border: 2px solid rgba(99,102,241,0.2);
+      padding: 12px 24px; border-radius: 14px;
+      font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-secondary:hover { background: rgba(99,102,241,0.18); transform: translateY(-2px); }
+
+    @media (max-width: 600px) {
+      .section-scores { grid-template-columns: 1fr; }
+      .score-circle { width: 120px; height: 120px; }
+      .score-num { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+<div class="particles" id="particles"></div>
+
+<div class="container">
+
+  <nav>
+    <div class="logo">🎤 Confidex</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="diagnostic.html" class="active">Diagnostic</a>
+      <a href="exercise.html">Practice</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="badge">📋 Skill Diagnostic</div>
+    <h1>Know Your <span class="highlight">Level</span></h1>
+    <p class="subtitle">10 questions covering grammar, vocabulary, pronunciation, and speech clarity.</p>
+  </div>
+
+  <!-- Quiz -->
+  <div class="card quiz-wrap" id="quizCard">
+    <div class="q-number" id="qNumber">Question 1 of 10</div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressBar" style="width: 10%"></div>
+    </div>
+    <div class="q-category" id="qCategory"></div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="optionsContainer"></div>
+    <button class="btn-primary next-btn" id="nextBtn" onclick="nextQuestion()">
+      Next <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+  <!-- Results (hidden initially) -->
+  <div class="card result-wrap" id="resultCard" style="display:none;">
+    <div class="score-circle">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-label">out of 10</div>
+    </div>
+    <div class="level-badge" id="levelBadge"></div>
+    <p class="result-msg" id="resultMsg"></p>
+
+    <div class="section-scores">
+      <div class="section-score-item">
+        <div class="s-label">🔤 Grammar</div>
+        <div class="s-val" id="sGrammar">0/3</div>
+      </div>
+      <div class="section-score-item">
+        <div class="s-label">📖 Vocabulary</div>
+        <div class="s-val" id="sVocabulary">0/3</div>
+      </div>
+      <div class="section-score-item">
+        <div class="s-label">🗣️ Pronunciation</div>
+        <div class="s-val" id="sPronunciation">0/2</div>
+      </div>
+      <div class="section-score-item">
+        <div class="s-label">🎯 Speech Clarity</div>
+        <div class="s-val" id="sClarity">0/2</div>
+      </div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-secondary" onclick="restartQuiz()">🔄 Retake Test</button>
+      <a href="exercise.html"><button class="btn-primary">🎤 Start Practicing</button></a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  // Grammar (3)
+  {
+    category: "Grammar", catClass: "cat-grammar",
+    q: "Which sentence is grammatically correct?",
+    options: ["She don't like coffee.", "She doesn't likes coffee.", "She doesn't like coffee.", "She not like coffee."],
+    answer: 2
+  },
+  {
+    category: "Grammar", catClass: "cat-grammar",
+    q: "Choose the correct form: 'If I ___ you, I would apologize.'",
+    options: ["am", "was", "were", "be"],
+    answer: 2
+  },
+  {
+    category: "Grammar", catClass: "cat-grammar",
+    q: "Which is the correct past tense of 'speak'?",
+    options: ["speaked", "spoken", "spoke", "spook"],
+    answer: 2
+  },
+
+  // Vocabulary (3)
+  {
+    category: "Vocabulary", catClass: "cat-vocabulary",
+    q: "What does 'eloquent' mean?",
+    options: ["Loud and forceful", "Well-spoken and expressive", "Nervous and hesitant", "Quiet and reserved"],
+    answer: 1
+  },
+  {
+    category: "Vocabulary", catClass: "cat-vocabulary",
+    q: "Choose the best word: 'Her speech was ___; everyone was captivated.'",
+    options: ["mundane", "vague", "compelling", "confusing"],
+    answer: 2
+  },
+  {
+    category: "Vocabulary", catClass: "cat-vocabulary",
+    q: "What is a synonym for 'articulate'?",
+    options: ["Unclear", "Well-expressed", "Nervous", "Monotone"],
+    answer: 1
+  },
+
+  // Pronunciation (2)
+  {
+    category: "Pronunciation", catClass: "cat-pronunciation",
+    q: "Which word has a silent letter?",
+    options: ["cat", "run", "knife", "map"],
+    answer: 2
+  },
+  {
+    category: "Pronunciation", catClass: "cat-pronunciation",
+    q: "How many syllables does 'comfortable' have in natural speech?",
+    options: ["4 syllables", "3 syllables", "2 syllables", "5 syllables"],
+    answer: 1
+  },
+
+  // Speech Clarity (2)
+  {
+    category: "Speech Clarity", catClass: "cat-clarity",
+    q: "What is a 'filler word' in speech?",
+    options: ["A powerful keyword", "Words like 'um', 'uh', 'like' used unintentionally", "A technical term", "A word used to summarize"],
+    answer: 1
+  },
+  {
+    category: "Speech Clarity", catClass: "cat-clarity",
+    q: "Which is the best practice for clear public speaking?",
+    options: ["Speak as fast as possible", "Avoid eye contact", "Pause intentionally between key points", "Use complex vocabulary always"],
+    answer: 2
+  }
+];
+
+let current = 0;
+let score = 0;
+let sectionScores = { Grammar: 0, Vocabulary: 0, Pronunciation: 0, "Speech Clarity": 0 };
+let sectionTotals = { Grammar: 3, Vocabulary: 3, Pronunciation: 2, "Speech Clarity": 2 };
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('qNumber').textContent = `Question ${current + 1} of ${questions.length}`;
+  document.getElementById('progressBar').style.width = `${((current + 1) / questions.length) * 100}%`;
+  document.getElementById('qCategory').textContent = q.category;
+  document.getElementById('qCategory').className = `q-category ${q.catClass}`;
+  document.getElementById('qText').textContent = q.q;
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i, btn);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(index, btn) {
+  const q = questions[current];
+  const allOptions = document.querySelectorAll('.option');
+
+  allOptions.forEach(o => o.classList.add('disabled'));
+
+  if (index === q.answer) {
+    btn.classList.add('correct');
+    score++;
+    sectionScores[q.category]++;
+  } else {
+    btn.classList.add('wrong');
+    allOptions[q.answer].classList.add('correct');
+  }
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.style.display = 'flex';
+  nextBtn.textContent = current === questions.length - 1 ? '🏁 See Results' : 'Next →';
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) {
+    loadQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('quizCard').style.display = 'none';
+  const resultCard = document.getElementById('resultCard');
+  resultCard.style.display = 'block';
+
+  document.getElementById('scoreNum').textContent = score;
+
+  let level, msg, badgeClass;
+  if (score <= 4) {
+    level = "Beginner"; badgeClass = "level-beginner";
+    msg = "You're just getting started! Focus on grammar basics and daily vocabulary practice. Use Confidex to build your speaking confidence step by step.";
+  } else if (score <= 7) {
+    level = "Intermediate"; badgeClass = "level-intermediate";
+    msg = "Good foundation! You have solid basics but room to grow. Work on reducing filler words and expanding your vocabulary to speak more fluently.";
+  } else {
+    level = "Advanced"; badgeClass = "level-advanced";
+    msg = "Impressive! You have strong language skills. Now focus on refining your delivery, pacing, and stage presence with regular practice.";
+  }
+
+  const badge = document.getElementById('levelBadge');
+  badge.textContent = `🏅 ${level}`;
+  badge.className = `level-badge ${badgeClass}`;
+  document.getElementById('resultMsg').textContent = msg;
+
+  document.getElementById('sGrammar').textContent = `${sectionScores['Grammar']}/${sectionTotals['Grammar']}`;
+  document.getElementById('sVocabulary').textContent = `${sectionScores['Vocabulary']}/${sectionTotals['Vocabulary']}`;
+  document.getElementById('sPronunciation').textContent = `${sectionScores['Pronunciation']}/${sectionTotals['Pronunciation']}`;
+  document.getElementById('sClarity').textContent = `${sectionScores['Speech Clarity']}/${sectionTotals['Speech Clarity']}`;
+}
+
+function restartQuiz() {
+  current = 0; score = 0;
+  sectionScores = { Grammar: 0, Vocabulary: 0, Pronunciation: 0, "Speech Clarity": 0 };
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('quizCard').style.display = 'block';
+  loadQuestion();
+}
+
+// Particles
+const container = document.getElementById('particles');
+for (let i = 0; i < 18; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.animationDelay = Math.random() * 8 + 's';
+  p.style.animationDuration = (6 + Math.random() * 8) + 's';
+  p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
+  p.style.opacity = 0.15 + Math.random() * 0.25;
+  container.appendChild(p);
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
