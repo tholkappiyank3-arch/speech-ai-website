@@ -1,43 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Confidex</title>
+  <title>Confidex — Practice</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+<div class="particles" id="particles"></div>
+
 <div class="container">
 
-  <!-- Navigation -->
   <nav>
-    <a href="index.html">Home</a> |
-    <a href="exercise.html">Practice</a>
+    <div class="logo">🎤 Confidex</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="exercise.html" class="active">Practice</a>
+    </div>
   </nav>
 
-  <h1>🎤 Practice Your Speech with Confidex </h1>
-  <p class="subtitle">Record and improve your speaking</p>
-
-  <!-- Recording controls -->
-  <div class="card">
-    <button id="startBtn" class="start">Start Recording</button>
-    <button id="stopBtn" class="stop">Stop Recording</button>
+  <div class="page-header">
+    <div class="badge">🎙️ Live Session</div>
+    <h1>Practice Your <span class="highlight">Speech</span></h1>
+    <p class="subtitle">Hit record, speak your mind, and let AI coach you.</p>
   </div>
 
-  <!-- Transcript box -->
+  <div class="card record-card">
+    <div class="record-status" id="recordStatus">Ready to record</div>
+    <div class="btn-row">
+      <button id="startBtn" class="btn-primary"><span>▶ Start Recording</span></button>
+      <button id="stopBtn" class="btn-stop"><span>⏹ Stop</span></button>
+    </div>
+  </div>
+
   <div class="card">
-    <h3>Your Speech</h3>
+    <div class="card-label">📝 Your Speech</div>
     <div id="transcript" class="box"></div>
   </div>
 
-  <!-- Feedback box -->
   <div class="card">
-    <h3>AI Feedback</h3>
+    <div class="card-label">🧠 AI Feedback</div>
     <div id="feedback" class="box"></div>
   </div>
 
 </div>
 
 <script src="script.js"></script>
+<script>
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (6 + Math.random() * 8) + 's';
+    p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
+    p.style.opacity = 0.15 + Math.random() * 0.25;
+    container.appendChild(p);
+  }
+
+  document.getElementById('startBtn').addEventListener('click', () => {
+    document.getElementById('recordStatus').textContent = '🔴 Recording...';
+    document.getElementById('recordStatus').style.color = '#ef4444';
+  });
+  document.getElementById('stopBtn').addEventListener('click', () => {
+    document.getElementById('recordStatus').textContent = '⏳ Analyzing...';
+    document.getElementById('recordStatus').style.color = '#f59e0b';
+  });
+</script>
 
 </body>
 </html>

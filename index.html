@@ -1,35 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AI Public Speaking Coach</title>
+  <title>Confidex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body >
+<body>
+
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+<div class="particles" id="particles"></div>
 
 <div class="container">
 
-  <!-- Navigation -->
   <nav>
-    <a href="index.html">Home</a> |
-    <a href="exercise.html">Practice</a>
+    <div class="logo">🎤 Confidex</div>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="exercise.html">Practice</a>
+    </div>
   </nav>
 
-  <h1>🎤 AI Public Speaking Coach</h1>
-  <p class="subtitle">Improve your public speaking with AI feedback</p>
+  <section class="hero">
+    <div class="badge">✨ AI-Powered Coaching</div>
+    <h1>Speak with <span class="highlight">Confidence</span></h1>
+    <p class="subtitle">Record your speech and get instant AI feedback to become a better public speaker — in minutes.</p>
+    <div class="cta-group">
+      <a href="exercise.html">
+        <button class="btn-primary">
+          <span>Start Practicing</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </a>
+    </div>
+  </section>
 
-  <div class="card">
-    <h3>Welcome</h3>
-    <p>
-      This website helps you practice speeches and get instant feedback.
-      Click below to start practicing.
-    </p>
-
-    <a href="exercise.html">
-      <button class="start">Start Practicing</button>
-    </a>
-  </div>
+  <section class="features">
+    <div class="feature-card" style="--delay: 0.1s">
+      <div class="feature-icon">🎙️</div>
+      <h3>Record</h3>
+      <p>Speak naturally and let our speech recognition capture every word in real time.</p>
+    </div>
+    <div class="feature-card" style="--delay: 0.2s">
+      <div class="feature-icon">🧠</div>
+      <h3>Analyze</h3>
+      <p>Our AI coach instantly analyzes your strengths, weaknesses, and delivery.</p>
+    </div>
+    <div class="feature-card" style="--delay: 0.3s">
+      <div class="feature-icon">🚀</div>
+      <h3>Improve</h3>
+      <p>Get actionable suggestions to level up every time you practice.</p>
+    </div>
+  </section>
 
 </div>
+
+<script>
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (6 + Math.random() * 8) + 's';
+    p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
+    p.style.opacity = 0.15 + Math.random() * 0.25;
+    container.appendChild(p);
+  }
+</script>
 
 </body>
 </html>
