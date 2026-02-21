@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Confidex</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,20 +15,21 @@
 
 <div class="container">
 
- <nav>
-  <div class="logo">🎤 Confidex</div>
-  <div class="nav-links">
-    <a href="index.html" class="active">Home</a>
-    <a href="diagnostic.html">Diagnostic</a>
-    <a href="exercise.html">Practice</a>
-  </div>
-</nav>
+  <nav>
+    <div class="logo">🎤 Confidex</div>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="diagnostic.html">Diagnostic</a>
+      <a href="exercise.html">Practice</a>
+      <button class="dark-toggle" id="darkToggle" onclick="toggleDark()">🌙</button>
+    </div>
+  </nav>
 
   <section class="hero">
     <div class="badge">✨ AI-Powered Coaching</div>
     <h1>Speak with <span class="highlight">Confidence</span></h1>
     <p class="subtitle">Record your speech and get instant AI feedback to become a better public speaker — in minutes.</p>
-  <div class="cta-group">
+    <div class="cta-group">
       <a href="exercise.html">
         <button class="btn-primary">
           <span>Start Practicing</span>
@@ -36,9 +37,7 @@
         </button>
       </a>
       <a href="diagnostic.html">
-        <button class="btn-secondary">
-          📋 Take Diagnostic Test
-        </button>
+        <button class="btn-secondary">📋 Take Diagnostic Test</button>
       </a>
     </div>
   </section>
@@ -74,6 +73,17 @@
     p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
     p.style.opacity = 0.15 + Math.random() * 0.25;
     container.appendChild(p);
+  }
+
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+    const btn = document.getElementById('darkToggle');
+    btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    localStorage.setItem('dark', document.body.classList.contains('dark'));
+  }
+  if (localStorage.getItem('dark') === 'true') {
+    document.body.classList.add('dark');
+    document.getElementById('darkToggle').textContent = '☀️';
   }
 </script>
 

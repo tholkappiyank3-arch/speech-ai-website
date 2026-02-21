@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Confidex — Practice</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,13 +16,14 @@
 <div class="container">
 
   <nav>
-  <div class="logo">🎤 Confidex</div>
-  <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="diagnostic.html">Diagnostic</a>
-    <a href="exercise.html" class="active">Practice</a>
-  </div>
-</nav>
+    <div class="logo">🎤 Confidex</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="diagnostic.html">Diagnostic</a>
+      <a href="exercise.html" class="active">Practice</a>
+      <button class="dark-toggle" id="darkToggle" onclick="toggleDark()">🌙</button>
+    </div>
+  </nav>
 
   <div class="page-header">
     <div class="badge">🎙️ Live Session</div>
@@ -30,7 +31,16 @@
     <p class="subtitle">Hit record, speak your mind, and let AI coach you.</p>
   </div>
 
+  <!-- Topic Prompt -->
+  <div class="card topic-card">
+    <div class="card-label">💡 Topic Prompt</div>
+    <div id="topicText" class="topic-text">Click below to get a random topic!</div>
+    <button class="btn-secondary" onclick="newTopic()" style="margin-top:14px;">🔀 New Topic</button>
+  </div>
+
+  <!-- Recording controls -->
   <div class="card record-card">
+    <div class="timer-display" id="timerDisplay">⏱ 00:00</div>
     <div class="record-status" id="recordStatus">Ready to record</div>
     <div class="btn-row">
       <button id="startBtn" class="btn-primary"><span>▶ Start Recording</span></button>
@@ -38,11 +48,16 @@
     </div>
   </div>
 
+  <!-- Filler word result -->
+  <div id="fillerResult" class="filler-box" style="display:none;"></div>
+
+  <!-- Transcript -->
   <div class="card">
     <div class="card-label">📝 Your Speech</div>
     <div id="transcript" class="box"></div>
   </div>
 
+  <!-- Feedback -->
   <div class="card">
     <div class="card-label">🧠 AI Feedback</div>
     <div id="feedback" class="box"></div>
@@ -52,6 +67,7 @@
 
 <script src="script.js"></script>
 <script>
+  // Particles
   const container = document.getElementById('particles');
   for (let i = 0; i < 18; i++) {
     const p = document.createElement('div');
@@ -64,6 +80,7 @@
     container.appendChild(p);
   }
 
+  // Status updates
   document.getElementById('startBtn').addEventListener('click', () => {
     document.getElementById('recordStatus').textContent = '🔴 Recording...';
     document.getElementById('recordStatus').style.color = '#ef4444';
@@ -72,6 +89,44 @@
     document.getElementById('recordStatus').textContent = '⏳ Analyzing...';
     document.getElementById('recordStatus').style.color = '#f59e0b';
   });
+
+  // Topic prompts
+  const topics = [
+    "Describe your biggest achievement in 2 minutes.",
+    "Talk about a person who inspired you the most.",
+    "What would you do if you were president for a day?",
+    "Describe your dream job and why you want it.",
+    "Talk about a challenge you overcame recently.",
+    "What is the most important skill for success?",
+    "Describe a place you would love to visit and why.",
+    "What does success mean to you?",
+    "Talk about a book or movie that changed your perspective.",
+    "Why is public speaking important in daily life?",
+    "Describe your perfect day from morning to night.",
+    "What advice would you give your younger self?",
+    "Talk about a hobby you are passionate about.",
+    "What is the biggest problem in the world today?",
+    "Describe a time you had to make a difficult decision."
+  ];
+
+  function newTopic() {
+    const t = topics[Math.floor(Math.random() * topics.length)];
+    document.getElementById('topicText').textContent = t;
+  }
+
+  newTopic();
+
+  // Dark mode
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+    const btn = document.getElementById('darkToggle');
+    btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    localStorage.setItem('dark', document.body.classList.contains('dark'));
+  }
+  if (localStorage.getItem('dark') === 'true') {
+    document.body.classList.add('dark');
+    document.getElementById('darkToggle').textContent = '☀️';
+  }
 </script>
 
 </body>
