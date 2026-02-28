@@ -57,11 +57,18 @@ app.post("/generate-questions", async (req, res) => {
         model: "llama-3.1-8b-instant",
         messages: [{
           role: "user",
-          content: `Generate exactly 10 multiple choice questions to test English public speaking skills.
-Include: 3 Grammar, 3 Vocabulary, 2 Pronunciation, 2 Speech Clarity questions.
+          content: `Generate exactly 25 multiple choice questions to test advanced English and public speaking skills.
+Include exactly:
+- 5 Comprehension questions (based on a short paragraph or context, testing understanding)
+- 10 Grammar questions (advanced grammar: subjunctive, passive voice, conditionals, tenses, articles)
+- 5 Pronunciation questions (silent letters, syllable stress, homophones, phonetics)
+- 5 Vocabulary questions (advanced vocabulary, idioms, formal vs informal usage, word meaning in context)
+
+Difficulty: above intermediate, close to advanced level. Avoid simple or obvious questions.
+
 Return ONLY a valid JSON array, no extra text, no markdown, no backticks, in this format:
 [{"category":"Grammar","question":"...","options":["a","b","c","d"],"answer":0}]
-The answer field is the index 0-3 of the correct option. Make questions varied each time.`
+The answer field is the index 0-3 of the correct option. Make questions completely different each time.`
         }],
         temperature: 0.9
       })

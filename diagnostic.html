@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Eloquence — Diagnostic Test</title>
+  <title>Confidex — Diagnostic Test</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
@@ -27,7 +27,7 @@
     .cat-grammar { background: rgba(99,102,241,0.12); color: #6366f1; }
     .cat-vocabulary { background: rgba(34,211,238,0.12); color: #0891b2; }
     .cat-pronunciation { background: rgba(251,146,60,0.15); color: #ea580c; }
-    .cat-clarity { background: rgba(34,197,94,0.12); color: #16a34a; }
+    .cat-comprehension { background: rgba(34,197,94,0.12); color: #16a34a; }
 
     .q-text { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 22px; line-height: 1.5; }
 
@@ -118,7 +118,7 @@
 <div class="container">
 
   <nav>
-    <div class="logo">🎤 My Eloquence</div>
+    <div class="logo">🎤 Confidex</div>
     <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="diagnostic.html" class="active">Diagnostic</a>
@@ -130,14 +130,16 @@
   <div class="page-header">
     <div class="badge">📋 Skill Diagnostic</div>
     <h1>Know Your <span class="highlight">Level</span></h1>
-    <p class="subtitle">25 AI-generated questions covering grammar, vocabulary, pronunciation, and speech clarity.</p>
+    <p class="subtitle">25 AI-generated questions covering comprehension, grammar, pronunciation, and vocabulary — above intermediate level.</p>
   </div>
 
+  <!-- Loading -->
   <div class="card loading-box" id="loadingCard">
     <div class="spinner"></div>
     <p>AI is generating your 25 questions...</p>
   </div>
 
+  <!-- Quiz -->
   <div class="card quiz-wrap" id="quizCard" style="display:none;">
     <div class="q-number" id="qNumber">Question 1 of 25</div>
     <div class="progress-bar-bg">
@@ -151,6 +153,7 @@
     </button>
   </div>
 
+  <!-- Results -->
   <div class="card result-wrap" id="resultCard" style="display:none;">
     <div class="score-circle">
       <div class="score-num" id="scoreNum">0</div>
@@ -160,20 +163,20 @@
     <p class="result-msg" id="resultMsg"></p>
     <div class="section-scores">
       <div class="section-score-item">
-        <div class="s-label">🔤 Grammar</div>
-        <div class="s-val" id="sGrammar">0/7</div>
+        <div class="s-label">📖 Comprehension</div>
+        <div class="s-val" id="sComprehension">0/5</div>
       </div>
       <div class="section-score-item">
-        <div class="s-label">📖 Vocabulary</div>
-        <div class="s-val" id="sVocabulary">0/7</div>
+        <div class="s-label">🔤 Grammar</div>
+        <div class="s-val" id="sGrammar">0/10</div>
       </div>
       <div class="section-score-item">
         <div class="s-label">🗣️ Pronunciation</div>
-        <div class="s-val" id="sPronunciation">0/6</div>
+        <div class="s-val" id="sPronunciation">0/5</div>
       </div>
       <div class="section-score-item">
-        <div class="s-label">🎯 Speech Clarity</div>
-        <div class="s-val" id="sClarity">0/5</div>
+        <div class="s-label">📚 Vocabulary</div>
+        <div class="s-val" id="sVocabulary">0/5</div>
       </div>
     </div>
     <div class="result-actions">
@@ -188,63 +191,25 @@
 let questions = [];
 let current = 0;
 let score = 0;
-let sectionScores = { Grammar: 0, Vocabulary: 0, Pronunciation: 0, "Speech Clarity": 0 };
-let sectionTotals = { Grammar: 0, Vocabulary: 0, Pronunciation: 0, "Speech Clarity": 0 };
+let sectionScores = { Comprehension: 0, Grammar: 0, Pronunciation: 0, Vocabulary: 0 };
 
 async function startQuiz() {
   current = 0; score = 0;
-  sectionScores = { Grammar: 0, Vocabulary: 0, Pronunciation: 0, "Speech Clarity": 0 };
-  sectionTotals = { Grammar: 0, Vocabulary: 0, Pronunciation: 0, "Speech Clarity": 0 };
+  sectionScores = { Comprehension: 0, Grammar: 0, Pronunciation: 0, Vocabulary: 0 };
 
   document.getElementById('resultCard').style.display = 'none';
   document.getElementById('quizCard').style.display = 'none';
   document.getElementById('loadingCard').style.display = 'block';
-  document.getElementById('loadingCard').innerHTML = `
-    <div class="spinner"></div>
-    <p>AI is generating your 25 questions...</p>
-  `;
+  document.getElementById('loadingCard').innerHTML = `<div class="spinner"></div><p>AI is generating your 25 questions...</p>`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://speech-ai-website-1.onrender.com/generate-questions", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 4000,
-        system: `You are an expert English language test designer. Generate exactly 25 multiple-choice questions for an English language diagnostic test.
-Distribute questions across these 4 categories:
-- Grammar: 7 questions
-- Vocabulary: 7 questions
-- Pronunciation: 6 questions
-- Speech Clarity: 5 questions
-
-Each question must have exactly 4 options and one correct answer (0-indexed).
-Vary difficulty: mix easy, medium, and hard questions.
-
-Respond ONLY with a valid JSON object in this exact format, no preamble, no markdown backticks:
-{
-  "questions": [
-    {
-      "category": "Grammar",
-      "question": "...",
-      "options": ["A", "B", "C", "D"],
-      "answer": 0
-    }
-  ]
-}`,
-        messages: [{ role: "user", content: "Generate 25 English diagnostic MCQ questions now." }]
-      })
+      headers: { "Content-Type": "application/json" }
     });
 
     const data = await response.json();
-    const text = data.content.map(i => i.text || "").join("");
-    const clean = text.replace(/```json|```/g, "").trim();
-    const parsed = JSON.parse(clean);
-    questions = parsed.questions;
-
-    questions.forEach(q => {
-      if (sectionTotals[q.category] !== undefined) sectionTotals[q.category]++;
-    });
+    questions = data.questions;
 
     document.getElementById('loadingCard').style.display = 'none';
     document.getElementById('quizCard').style.display = 'block';
@@ -259,15 +224,19 @@ Respond ONLY with a valid JSON object in this exact format, no preamble, no mark
 }
 
 function getCatClass(category) {
-  const map = { "Grammar": "cat-grammar", "Vocabulary": "cat-vocabulary", "Pronunciation": "cat-pronunciation", "Speech Clarity": "cat-clarity" };
+  const map = {
+    "Grammar": "cat-grammar",
+    "Vocabulary": "cat-vocabulary",
+    "Pronunciation": "cat-pronunciation",
+    "Comprehension": "cat-comprehension"
+  };
   return map[category] || "cat-grammar";
 }
 
 function loadQuestion() {
   const q = questions[current];
-  const total = questions.length;
-  document.getElementById('qNumber').textContent = `Question ${current + 1} of ${total}`;
-  document.getElementById('progressBar').style.width = `${((current + 1) / total) * 100}%`;
+  document.getElementById('qNumber').textContent = `Question ${current + 1} of ${questions.length}`;
+  document.getElementById('progressBar').style.width = `${((current + 1) / questions.length) * 100}%`;
   document.getElementById('qCategory').textContent = q.category;
   document.getElementById('qCategory').className = `q-category ${getCatClass(q.category)}`;
   document.getElementById('qText').textContent = q.question;
@@ -318,19 +287,16 @@ function showResults() {
   document.getElementById('resultCard').style.display = 'block';
   document.getElementById('scoreNum').textContent = score;
 
-  const total = questions.length;
-  const pct = score / total;
   let level, msg, badgeClass;
-
-  if (pct < 0.4) {
+  if (score <= 10) {
     level = "Beginner"; badgeClass = "level-beginner";
-    msg = "You're just getting started! Focus on grammar basics and daily vocabulary practice. Use My Eloquence to build your speaking confidence step by step.";
-  } else if (pct < 0.7) {
+    msg = "Keep practicing! Focus on grammar fundamentals, build your vocabulary daily, and read more to improve comprehension. Confidex is here to help you grow.";
+  } else if (score <= 18) {
     level = "Intermediate"; badgeClass = "level-intermediate";
-    msg = "Good foundation! You have solid basics but room to grow. Work on reducing filler words and expanding your vocabulary to speak more fluently.";
+    msg = "Solid performance! You have a good grasp of English but push further — focus on advanced grammar, pronunciation precision, and reading complex texts.";
   } else {
     level = "Advanced"; badgeClass = "level-advanced";
-    msg = "Impressive! You have strong language skills. Now focus on refining your delivery, pacing, and stage presence with regular practice.";
+    msg = "Outstanding! You're at an advanced level. Focus on mastering nuance, tone, and delivery to become a truly exceptional public speaker.";
   }
 
   const badge = document.getElementById('levelBadge');
@@ -338,15 +304,10 @@ function showResults() {
   badge.className = `level-badge ${badgeClass}`;
   document.getElementById('resultMsg').textContent = msg;
 
-  const g = sectionTotals['Grammar'] || 7;
-  const v = sectionTotals['Vocabulary'] || 7;
-  const p = sectionTotals['Pronunciation'] || 6;
-  const c = sectionTotals['Speech Clarity'] || 5;
-
-  document.getElementById('sGrammar').textContent = `${sectionScores['Grammar']}/${g}`;
-  document.getElementById('sVocabulary').textContent = `${sectionScores['Vocabulary']}/${v}`;
-  document.getElementById('sPronunciation').textContent = `${sectionScores['Pronunciation']}/${p}`;
-  document.getElementById('sClarity').textContent = `${sectionScores['Speech Clarity']}/${c}`;
+  document.getElementById('sComprehension').textContent = `${sectionScores['Comprehension']}/5`;
+  document.getElementById('sGrammar').textContent = `${sectionScores['Grammar']}/10`;
+  document.getElementById('sPronunciation').textContent = `${sectionScores['Pronunciation']}/5`;
+  document.getElementById('sVocabulary').textContent = `${sectionScores['Vocabulary']}/5`;
 }
 
 function toggleDark() {
