@@ -232,9 +232,28 @@ body.dark .bg-orb { filter: blur(90px) brightness(0.6); }
 /* ===== MOBILE ===== */
 @media (max-width: 600px) {
   .container { width: 95%; padding: 20px 0 40px; }
-  nav { padding: 10px 14px; margin-bottom: 30px; }
+
+  nav {
+    padding: 10px 14px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
   .logo { font-size: 17px; }
+
+  .nav-links {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
   nav a { padding: 6px 10px; font-size: 13px; }
+
+  .dark-toggle {
+    padding: 5px 10px;
+    font-size: 14px;
+  }
   h1 { font-size: 1.9rem; letter-spacing: -1px; }
   .subtitle { font-size: 0.95rem; }
   .features { grid-template-columns: 1fr; gap: 12px; }
