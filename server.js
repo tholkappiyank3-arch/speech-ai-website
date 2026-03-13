@@ -18,15 +18,15 @@ app.post("/ai", async (req, res) => {
   const prompt = `
 You are a professional public speaking coach.
 Analyze the speech below and reply ONLY in this format:
-Strengths:
+
+Tone & Pronunciation:
 - ...
-Weaknesses:
+
+Vocabulary & Grammar:
 - ...
-Suggestions:
-- ...
+
 Speech:
 ${text}`;
-
   try {
     const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
