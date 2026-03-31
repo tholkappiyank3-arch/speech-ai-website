@@ -53,7 +53,7 @@
       <a href="learn.html">Learn</a>
       <a href="exercise.html">Practice</a>
       <a href="history.html" class="active">History</a>
-      <button class="dark-toggle" id="darkToggle" onclick="toggleDark()">🌙</button>
+      <button class="dark-toggle" id="darkToggle">🌙</button>
     </div>
   </nav>
 
@@ -73,21 +73,30 @@
 
 </div>
 
-<script type="module">
-  import { getUser, getSessions, updateNav, signInWithGoogle } from './auth.js'
-
-  // Dark mode
- window.toggleDark = function() {
+<script>
+  // Dark mode - make it globally accessible
+  window.toggleDark = function() {
     document.body.classList.toggle('dark')
     const btn = document.getElementById('darkToggle')
-    btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙'
+    if (btn) {
+      btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙'
+    }
     localStorage.setItem('dark', document.body.classList.contains('dark'))
   }
- 
+  
+  // Initialize dark mode on page load
   if (localStorage.getItem('dark') === 'true') {
     document.body.classList.add('dark')
-    document.getElementById('darkToggle').textContent = '☀️'
+    const darkToggle = document.getElementById('darkToggle')
+    if (darkToggle) darkToggle.textContent = '☀️'
   }
+  
+  // Add event listener to the dark toggle button
+  document.getElementById('darkToggle').addEventListener('click', window.toggleDark)
+</script>
+
+<script type="module">
+  import { getUser, getSessions, updateNav, signInWithGoogle } from './auth.js'
 
   // Particles
   const container = document.getElementById('particles')
