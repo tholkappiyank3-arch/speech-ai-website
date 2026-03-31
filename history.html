@@ -77,13 +77,13 @@
   import { getUser, getSessions, updateNav, signInWithGoogle } from './auth.js'
 
   // Dark mode
-  function toggleDark() {
+ window.toggleDark = function() {
     document.body.classList.toggle('dark')
     const btn = document.getElementById('darkToggle')
     btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙'
     localStorage.setItem('dark', document.body.classList.contains('dark'))
   }
-  window.toggleDark = toggleDark
+ 
   if (localStorage.getItem('dark') === 'true') {
     document.body.classList.add('dark')
     document.getElementById('darkToggle').textContent = '☀️'
@@ -149,6 +149,6 @@
     histContainer.appendChild(card)
   })
 </script>
-
+<script type="module" src="login-widget.js"></script>
 </body>
 </html>
