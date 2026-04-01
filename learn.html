@@ -1,135 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Eloquence — Tone & Pronunciation</title>
- <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>My Eloquence — Learn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    .streak-bar {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 30px;
-    }
-    .streak-day {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-    .streak-circle {
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem;
-      font-weight: 800;
-      border: 2px solid var(--border);
-      background: rgba(255,255,255,0.5);
-      color: var(--text-muted);
-      transition: all 0.3s ease;
-    }
+    .streak-bar { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
+    .streak-day { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .streak-circle { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 800; border: 2px solid var(--border); background: rgba(255,255,255,0.5); color: var(--text-muted); transition: all 0.3s ease; }
     .streak-circle.done { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border-color: #22c55e; box-shadow: 0 4px 12px rgba(34,197,94,0.3); }
-    .streak-circle.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(99,102,241,0.35); animation: pulse 1.5s ease-in-out infinite; }
-    .streak-circle.frozen { background: rgba(99,102,241,0.1); color: var(--primary); border-color: var(--primary); }
+    .streak-circle.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(255,75,110,0.35); animation: pulse 1.5s ease-in-out infinite; }
+    .streak-circle.frozen { background: rgba(255,75,110,0.1); color: var(--primary); border-color: var(--primary); }
     .streak-circle.locked { opacity: 0.4; }
     .streak-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); }
-
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 4px 12px rgba(99,102,241,0.35); }
-      50% { box-shadow: 0 4px 24px rgba(99,102,241,0.6); }
-    }
-
-    .streak-info {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .streak-count {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--primary);
-    }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 4px 12px rgba(255,75,110,0.35); } 50% { box-shadow: 0 4px 24px rgba(255,75,110,0.6); } }
+    .streak-info { text-align: center; margin-bottom: 24px; }
+    .streak-count { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--primary); }
     .streak-sub { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
-
-    .frozen-msg {
-      background: rgba(99,102,241,0.08);
-      border: 1.5px dashed rgba(99,102,241,0.3);
-      border-radius: 14px;
-      padding: 20px;
-      text-align: center;
-      font-weight: 700;
-      color: var(--primary);
-      font-size: 1rem;
-    }
-
-    .tip-box {
-      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(34,211,238,0.08));
-      border: 1.5px solid rgba(99,102,241,0.2);
-      border-radius: 14px;
-      padding: 16px 20px;
-      margin-bottom: 20px;
-      font-size: 0.95rem;
-      line-height: 1.7;
-      color: var(--text);
-    }
-    .tip-box strong { color: var(--primary); }
-
-    .progress-bar-bg { background: rgba(99,102,241,0.12); border-radius: 99px; height: 8px; margin-bottom: 28px; overflow: hidden; }
+    .frozen-msg { background: rgba(255,75,110,0.08); border: 1.5px dashed rgba(255,75,110,0.3); border-radius: 14px; padding: 20px; text-align: center; font-weight: 700; color: var(--primary); font-size: 1rem; }
+    .tip-box { background: linear-gradient(135deg, rgba(255,75,110,0.06), rgba(255,206,0,0.06)); border: 1.5px solid rgba(255,75,110,0.15); border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.7; color: var(--text); }
+    .progress-bar-bg { background: rgba(255,75,110,0.12); border-radius: 99px; height: 8px; margin-bottom: 28px; overflow: hidden; }
     .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 99px; transition: width 0.4s ease; }
-
     .q-number { font-size: 0.8rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
     .q-category { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 3px 12px; border-radius: 99px; margin-bottom: 14px; }
     .cat-tone { background: rgba(251,146,60,0.15); color: #ea580c; }
     .cat-clarity { background: rgba(34,197,94,0.12); color: #16a34a; }
     .q-text { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 22px; line-height: 1.6; }
-
     .options { display: flex; flex-direction: column; gap: 12px; }
-    .option { background: rgba(255,255,255,0.7); border: 2px solid var(--border); border-radius: 14px; padding: 14px 18px; font-family: 'Nunito', sans-serif; font-size: 0.97rem; font-weight: 600; color: var(--text); cursor: pointer; text-align: left; transition: all 0.2s ease; }
-    .option:hover { border-color: var(--primary); background: rgba(99,102,241,0.07); transform: translateX(4px); }
+    .option { background: rgba(255,255,255,0.7); border: 2px solid var(--border); border-radius: 14px; padding: 14px 18px; font-family: 'Outfit', sans-serif; font-size: 0.97rem; font-weight: 600; color: var(--text); cursor: pointer; text-align: left; transition: all 0.2s ease; }
+    .option:hover { border-color: var(--primary); background: rgba(255,75,110,0.06); transform: translateX(4px); }
     .option.correct { border-color: #22c55e; background: rgba(34,197,94,0.1); color: #15803d; }
     .option.wrong { border-color: #ef4444; background: rgba(239,68,68,0.1); color: #dc2626; }
     .option.disabled { pointer-events: none; }
-
-    .explanation-box {
-      margin-top: 14px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      background: rgba(99,102,241,0.07);
-      border: 1px solid rgba(99,102,241,0.2);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.6;
-      display: none;
-    }
+    .explanation-box { margin-top: 14px; padding: 12px 16px; border-radius: 12px; background: rgba(255,75,110,0.06); border: 1px solid rgba(255,75,110,0.15); font-size: 0.9rem; font-weight: 600; color: var(--text); line-height: 1.6; display: none; }
     .explanation-box.show { display: block; animation: fadeUp 0.3s ease both; }
-
     .next-btn { display: none; margin-top: 20px; width: 100%; justify-content: center; }
-
     .result-wrap { text-align: center; animation: fadeUp 0.7s ease both; }
-    .score-circle { width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 12px 40px rgba(99,102,241,0.35); }
-    .score-num { font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800; color: white; line-height: 1; }
+    .score-circle { width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 12px 40px rgba(255,75,110,0.35); }
+    .score-num { font-family: 'Outfit', sans-serif; font-size: 2.8rem; font-weight: 800; color: white; line-height: 1; }
     .score-label { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.8); }
     .result-msg { font-size: 1rem; color: var(--text-muted); line-height: 1.7; max-width: 420px; margin: 0 auto 28px; }
     .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
-
-    body.dark .option { background: rgba(30,30,50,0.7); color: #e2e8f0; border-color: rgba(99,102,241,0.2); }
-    body.dark .option:hover { background: rgba(99,102,241,0.15); }
+    body.dark .option { background: rgba(22,22,31,0.8); color: #f0f0ff; border-color: rgba(124,131,255,0.2); }
+    body.dark .option:hover { background: rgba(124,131,255,0.1); }
     body.dark .option.correct { background: rgba(34,197,94,0.15); color: #4ade80; }
     body.dark .option.wrong { background: rgba(239,68,68,0.15); color: #f87171; }
-    body.dark .q-text { color: #e2e8f0; }
-    body.dark .tip-box { color: #e2e8f0; }
-    body.dark .explanation-box { background: rgba(99,102,241,0.12); color: #e2e8f0; }
-    body.dark .frozen-msg { color: #818cf8; }
-    body.dark .streak-label { color: #94a3b8; }
-
-    @media (max-width: 600px) {
-      .streak-circle { width: 36px; height: 36px; font-size: 0.9rem; }
-      .score-circle { width: 120px; height: 120px; }
-      .score-num { font-size: 2.2rem; }
-    }
+    body.dark .q-text { color: #f0f0ff; }
+    body.dark .tip-box { color: #e0e0ff; background: rgba(124,131,255,0.06); border-color: rgba(124,131,255,0.15); }
+    body.dark .explanation-box { background: rgba(124,131,255,0.08); color: #e0e0ff; border-color: rgba(124,131,255,0.2); }
+    body.dark .frozen-msg { color: #7c83ff; background: rgba(124,131,255,0.08); border-color: rgba(124,131,255,0.25); }
+    body.dark .streak-label { color: #7070a0; }
+    @media (max-width: 600px) { .streak-circle { width: 36px; height: 36px; font-size: 0.9rem; } .score-circle { width: 120px; height: 120px; } .score-num { font-size: 2.2rem; } }
   </style>
 </head>
 <body>
@@ -140,26 +63,24 @@
 <div class="particles" id="particles"></div>
 
 <div class="container">
-
   <nav>
     <div class="logo">🎤 My Eloquence</div>
-  <div class="nav-links">
-  <a href="index.html">Home</a>
-  <a href="diagnostic.html">Diagnostic</a>
-  <a href="learn.html" class="active">Tone & Pronunciation</a>
-  <a href="exercise.html">Practice</a>
-  <a href="history.html">History</a>
-  <button class="dark-toggle" id="darkToggle" onclick="toggleDark()">🌙</button>
-</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="diagnostic.html">Diagnostic</a>
+      <a href="learn.html" class="active">Learn</a>
+      <a href="exercise.html">Practice</a>
+      <a href="history.html">History</a>
+      <button class="dark-toggle" id="darkToggle" onclick="toggleDark()">🌙</button>
+    </div>
   </nav>
 
   <div class="page-header">
-    <div class="badge">🗣️ Master Your Voice</div>
-    <h1>Tone & <span class="highlight">Pronunciation</span></h1>
-    <p class="subtitle">Learn how to use pitch, tone, and clear pronunciation to speak with confidence and impact.</p>
+    <div class="badge">🔥 Daily Streak</div>
+    <h1>Learn & <span class="highlight">Grow</span></h1>
+    <p class="subtitle">Complete 10 questions daily to build your speaking skills step by step.</p>
   </div>
 
-  <!-- Streak Bar -->
   <div class="card">
     <div class="streak-info">
       <div class="streak-count" id="streakCount">🔥 0 Day Streak</div>
@@ -168,17 +89,13 @@
     <div class="streak-bar" id="streakBar"></div>
   </div>
 
-  <!-- Frozen message -->
-  <div class="frozen-msg" id="frozenMsg" style="display:none; margin-top:20px;">
+  <div class="frozen-msg" id="frozenMsg" style="display:none;margin-top:20px;">
     ❄️ You missed yesterday but your streak is frozen! Come back today to continue from where you left off.
   </div>
 
-  <!-- Quiz card -->
-  <div class="card" id="quizCard" style="display:none; margin-top:20px;">
+  <div class="card" id="quizCard" style="display:none;margin-top:20px;">
     <div class="q-number" id="qNumber">Question 1 of 10</div>
-    <div class="progress-bar-bg">
-      <div class="progress-bar-fill" id="progressBar" style="width:10%"></div>
-    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar" style="width:10%"></div></div>
     <div class="tip-box" id="tipBox"></div>
     <div class="q-category" id="qCategory"></div>
     <div class="q-text" id="qText"></div>
@@ -189,16 +106,14 @@
     </button>
   </div>
 
-  <!-- Already done today -->
-  <div class="card" id="doneCard" style="display:none; margin-top:20px; text-align:center;">
-    <div style="font-size:2.5rem; margin-bottom:12px;">✅</div>
+  <div class="card" id="doneCard" style="display:none;margin-top:20px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:12px;">✅</div>
     <h3 style="margin-bottom:10px;">Today's lesson complete!</h3>
-    <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:20px;">Come back tomorrow to continue your streak and unlock the next day's lesson.</p>
+    <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:20px;">Come back tomorrow to continue your streak!</p>
     <a href="exercise.html"><button class="btn-primary">🎤 Go Practice</button></a>
   </div>
 
-  <!-- Result card -->
-  <div class="card result-wrap" id="resultCard" style="display:none; margin-top:20px;">
+  <div class="card result-wrap" id="resultCard" style="display:none;margin-top:20px;">
     <div class="score-circle">
       <div class="score-num" id="scoreNum">0</div>
       <div class="score-label">out of 10</div>
@@ -209,339 +124,266 @@
       <a href="index.html"><button class="btn-secondary">🏠 Home</button></a>
     </div>
   </div>
-
 </div>
 
 <script>
-// ===== QUESTION BANK (7 days x 10 questions) =====
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+    const btn = document.getElementById('darkToggle');
+    btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    localStorage.setItem('dark', document.body.classList.contains('dark'));
+  }
+  if (localStorage.getItem('dark') === 'true') {
+    document.body.classList.add('dark');
+    document.getElementById('darkToggle').textContent = '☀️';
+  }
+
+  const particleContainer = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (6 + Math.random() * 8) + 's';
+    p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
+    p.style.opacity = 0.15 + Math.random() * 0.25;
+    particleContainer.appendChild(p);
+  }
+
 const dayContent = {
   1: {
-    tip: "💡 Day 1 Tip: Tone is the emotion behind your words. A rising tone shows curiosity, a falling tone shows confidence. Pronunciation clarity means every syllable is heard distinctly.",
+    tip: "💡 Day 1 Tip: Tone is the emotion behind your words. A rising tone shows curiosity, a falling tone shows confidence.",
     questions: [
       { category: "Tone & Pronunciation", q: "Which sentence uses a confident falling tone?", options: ["Is this correct?", "This is correct.", "Maybe this is correct?", "Could this be correct?"], answer: 1, explanation: "Statements with a falling tone at the end sound confident and assertive." },
-      { category: "Tone & Pronunciation", q: "The word 'present' as a noun is stressed on which syllable?", options: ["pre-SENT", "PRE-sent", "Both equal", "Neither"], answer: 1, explanation: "As a noun, 'PRE-sent' (gift). As a verb, 'pre-SENT' (to give). Stress changes meaning!" },
-      { category: "Speech Clarity", q: "What is the best way to improve speech clarity?", options: ["Speak faster", "Swallow word endings", "Pause between key points", "Use more filler words"], answer: 2, explanation: "Pausing gives listeners time to absorb your message and makes you sound more confident." },
-      { category: "Tone & Pronunciation", q: "Which word has a silent letter?", options: ["cat", "knife", "run", "map"], answer: 1, explanation: "In 'knife', the 'k' is silent. It is pronounced 'nyfe'." },
-      { category: "Speech Clarity", q: "Which habit hurts speech clarity the most?", options: ["Pausing", "Eye contact", "Mumbling", "Breathing"], answer: 2, explanation: "Mumbling makes words unclear and hard to follow for your audience." },
-      { category: "Tone & Pronunciation", q: "How many syllables does 'comfortable' have in natural speech?", options: ["4", "3", "2", "5"], answer: 1, explanation: "In natural speech, 'comfortable' is typically pronounced as 3 syllables: COMF-ter-ble." },
+      { category: "Tone & Pronunciation", q: "The word 'present' as a noun is stressed on which syllable?", options: ["pre-SENT", "PRE-sent", "Both equal", "Neither"], answer: 1, explanation: "As a noun, 'PRE-sent' (gift). As a verb, 'pre-SENT' (to give)." },
+      { category: "Speech Clarity", q: "What is the best way to improve speech clarity?", options: ["Speak faster", "Swallow word endings", "Pause between key points", "Use more filler words"], answer: 2, explanation: "Pausing gives listeners time to absorb your message." },
+      { category: "Tone & Pronunciation", q: "Which word has a silent letter?", options: ["cat", "knife", "run", "map"], answer: 1, explanation: "In 'knife', the 'k' is silent." },
+      { category: "Speech Clarity", q: "Which habit hurts speech clarity the most?", options: ["Pausing", "Eye contact", "Mumbling", "Breathing"], answer: 2, explanation: "Mumbling makes words unclear and hard to follow." },
+      { category: "Tone & Pronunciation", q: "How many syllables does 'comfortable' have in natural speech?", options: ["4", "3", "2", "5"], answer: 1, explanation: "'Comfortable' is typically pronounced as 3 syllables: COMF-ter-ble." },
       { category: "Tone & Pronunciation", q: "A speaker who uses a monotone voice sounds:", options: ["Confident", "Energetic", "Boring", "Friendly"], answer: 2, explanation: "Monotone means no variation in pitch — it makes listeners disengage quickly." },
-      { category: "Speech Clarity", q: "What does 'articulation' mean in speech?", options: ["Speaking loudly", "Forming words clearly with mouth and tongue", "Using big words", "Breathing deeply"], answer: 1, explanation: "Articulation is the physical process of making clear, distinct sounds when speaking." },
-      { category: "Tone & Pronunciation", q: "Which is the correct pronunciation of 'Wednesday'?", options: ["Wed-nes-day", "Wenz-day", "Wed-en-day", "Weed-day"], answer: 1, explanation: "Wednesday is pronounced 'WENZ-day' — the middle syllable is dropped in natural speech." },
-      { category: "Speech Clarity", q: "Why should speakers avoid filler words like 'um' and 'uh'?", options: ["They add personality", "They show confidence", "They distract listeners", "They improve pacing"], answer: 2, explanation: "Filler words break the flow and make the speaker seem unprepared or nervous." }
+      { category: "Speech Clarity", q: "What does 'articulation' mean in speech?", options: ["Speaking loudly", "Forming words clearly with mouth and tongue", "Using big words", "Breathing deeply"], answer: 1, explanation: "Articulation is the physical process of making clear, distinct sounds." },
+      { category: "Tone & Pronunciation", q: "Which is the correct pronunciation of 'Wednesday'?", options: ["Wed-nes-day", "Wenz-day", "Wed-en-day", "Weed-day"], answer: 1, explanation: "Wednesday is pronounced 'WENZ-day'." },
+      { category: "Speech Clarity", q: "Why should speakers avoid filler words like 'um' and 'uh'?", options: ["They add personality", "They show confidence", "They distract listeners", "They improve pacing"], answer: 2, explanation: "Filler words break the flow and make the speaker seem unprepared." }
     ]
   },
   2: {
-    tip: "💡 Day 2 Tip: Pitch variation keeps your audience engaged. Practice going from high to low pitch within a sentence to add emphasis and emotion to your delivery.",
+    tip: "💡 Day 2 Tip: Pitch variation keeps your audience engaged. Practice going from high to low pitch within a sentence.",
     questions: [
-      { category: "Tone & Pronunciation", q: "What is 'pitch' in speech?", options: ["How loud you speak", "How high or low your voice sounds", "How fast you speak", "How clear your words are"], answer: 1, explanation: "Pitch refers to the highness or lowness of your voice, controlled by vocal cord vibration." },
-      { category: "Tone & Pronunciation", q: "Which word pair are homophones?", options: ["there / their", "cat / bat", "run / fun", "big / bag"], answer: 0, explanation: "Homophones sound the same but have different meanings and spellings. 'there' and 'their' sound identical." },
-      { category: "Speech Clarity", q: "What is the ideal speaking rate for public speaking?", options: ["50-80 words per minute", "130-160 words per minute", "200+ words per minute", "300 words per minute"], answer: 1, explanation: "130-160 wpm is the ideal conversational rate — fast enough to be engaging, slow enough to be clear." },
-      { category: "Tone & Pronunciation", q: "In the word 'photograph', which syllable is stressed?", options: ["pho-TO-graph", "PHO-to-graph", "pho-to-GRAPH", "All equal"], answer: 1, explanation: "PHO-to-graph — the stress falls on the first syllable in this word." },
-      { category: "Speech Clarity", q: "Eye contact during a speech helps to:", options: ["Confuse the audience", "Build connection and trust", "Show nervousness", "Speed up delivery"], answer: 1, explanation: "Eye contact creates a personal connection with listeners and shows confidence." },
+      { category: "Tone & Pronunciation", q: "What is 'pitch' in speech?", options: ["How loud you speak", "How high or low your voice sounds", "How fast you speak", "How clear your words are"], answer: 1, explanation: "Pitch refers to the highness or lowness of your voice." },
+      { category: "Tone & Pronunciation", q: "Which word pair are homophones?", options: ["there / their", "cat / bat", "run / fun", "big / bag"], answer: 0, explanation: "'there' and 'their' sound identical but have different meanings." },
+      { category: "Speech Clarity", q: "What is the ideal speaking rate for public speaking?", options: ["50-80 words per minute", "130-160 words per minute", "200+ words per minute", "300 words per minute"], answer: 1, explanation: "130-160 wpm is the ideal conversational rate." },
+      { category: "Tone & Pronunciation", q: "In the word 'photograph', which syllable is stressed?", options: ["pho-TO-graph", "PHO-to-graph", "pho-to-GRAPH", "All equal"], answer: 1, explanation: "PHO-to-graph — the stress falls on the first syllable." },
+      { category: "Speech Clarity", q: "Eye contact during a speech helps to:", options: ["Confuse the audience", "Build connection and trust", "Show nervousness", "Speed up delivery"], answer: 1, explanation: "Eye contact creates a personal connection with listeners." },
       { category: "Tone & Pronunciation", q: "The 'th' sound in 'think' is:", options: ["Voiced", "Unvoiced", "Silent", "Nasal"], answer: 1, explanation: "The 'th' in 'think' is unvoiced — air passes through but the vocal cords don't vibrate." },
-      { category: "Speech Clarity", q: "Which technique helps control nervousness before speaking?", options: ["Speaking faster", "Deep breathing", "Avoiding the audience", "Using more filler words"], answer: 1, explanation: "Deep breathing activates the parasympathetic nervous system, reducing anxiety before speaking." },
-      { category: "Tone & Pronunciation", q: "What does 'intonation' mean?", options: ["Volume of speech", "Rise and fall of pitch in speech", "Speed of speech", "Clarity of words"], answer: 1, explanation: "Intonation is the pattern of pitch changes across sentences that conveys meaning and emotion." },
-      { category: "Speech Clarity", q: "A speaker should pause:", options: ["Never, it shows weakness", "Only at the end", "Before and after key points", "Every 5 seconds"], answer: 2, explanation: "Strategic pauses before and after key points give emphasis and allow the audience to absorb information." },
-      { category: "Tone & Pronunciation", q: "Which word is commonly mispronounced as 'ex-presso'?", options: ["Express", "Espresso", "Expresso", "Impress"], answer: 1, explanation: "The correct word is 'espresso' — there is no 'x' in it. A very common mispronunciation!" }
+      { category: "Speech Clarity", q: "Which technique helps control nervousness before speaking?", options: ["Speaking faster", "Deep breathing", "Avoiding the audience", "Using more filler words"], answer: 1, explanation: "Deep breathing activates the parasympathetic nervous system, reducing anxiety." },
+      { category: "Tone & Pronunciation", q: "What does 'intonation' mean?", options: ["Volume of speech", "Rise and fall of pitch in speech", "Speed of speech", "Clarity of words"], answer: 1, explanation: "Intonation is the pattern of pitch changes across sentences." },
+      { category: "Speech Clarity", q: "A speaker should pause:", options: ["Never, it shows weakness", "Only at the end", "Before and after key points", "Every 5 seconds"], answer: 2, explanation: "Strategic pauses give emphasis and allow the audience to absorb information." },
+      { category: "Tone & Pronunciation", q: "Which word is commonly mispronounced as 'ex-presso'?", options: ["Express", "Espresso", "Expresso", "Impress"], answer: 1, explanation: "The correct word is 'espresso' — there is no 'x' in it." }
     ]
   },
   3: {
-    tip: "💡 Day 3 Tip: Volume control is power. Lowering your voice at key moments draws the audience in. Raising it adds urgency. Never stay at the same volume throughout.",
+    tip: "💡 Day 3 Tip: Volume control is power. Lowering your voice at key moments draws the audience in.",
     questions: [
-      { category: "Speech Clarity", q: "What is 'projection' in public speaking?", options: ["Using a microphone", "Throwing your voice to reach the back of the room", "Showing slides", "Making eye contact"], answer: 1, explanation: "Projection means controlling volume and resonance so your voice carries clearly to all listeners." },
+      { category: "Speech Clarity", q: "What is 'projection' in public speaking?", options: ["Using a microphone", "Throwing your voice to reach the back of the room", "Showing slides", "Making eye contact"], answer: 1, explanation: "Projection means controlling volume so your voice carries clearly to all listeners." },
       { category: "Tone & Pronunciation", q: "Which sentence has correct word stress?", options: ["I didn't say HE stole it", "I DIDN'T say he stole it", "I didn't SAY he stole it", "All of the above change meaning"], answer: 3, explanation: "Stressing different words changes the meaning entirely — this is called contrastive stress." },
-      { category: "Tone & Pronunciation", q: "The word 'colonel' is pronounced as:", options: ["col-o-nel", "ker-nel", "col-nel", "co-lo-nel"], answer: 1, explanation: "'Colonel' is pronounced 'KER-nel' — one of English's most surprising pronunciations!" },
-      { category: "Speech Clarity", q: "What is 'chunking' in speech delivery?", options: ["Breaking speech into fast segments", "Grouping words into meaningful phrases with pauses", "Using bullet points", "Repeating key words"], answer: 1, explanation: "Chunking groups related words together, making speech easier to follow and remember." },
-      { category: "Tone & Pronunciation", q: "A rising intonation at the end of a sentence usually indicates:", options: ["A statement", "A command", "A question or uncertainty", "Anger"], answer: 2, explanation: "Rising intonation signals a question or uncertainty, even in statements (uptalk)." },
+      { category: "Tone & Pronunciation", q: "The word 'colonel' is pronounced as:", options: ["col-o-nel", "ker-nel", "col-nel", "co-lo-nel"], answer: 1, explanation: "'Colonel' is pronounced 'KER-nel'." },
+      { category: "Speech Clarity", q: "What is 'chunking' in speech delivery?", options: ["Breaking speech into fast segments", "Grouping words into meaningful phrases with pauses", "Using bullet points", "Repeating key words"], answer: 1, explanation: "Chunking groups related words together, making speech easier to follow." },
+      { category: "Tone & Pronunciation", q: "A rising intonation at the end of a sentence usually indicates:", options: ["A statement", "A command", "A question or uncertainty", "Anger"], answer: 2, explanation: "Rising intonation signals a question or uncertainty." },
       { category: "Speech Clarity", q: "Which is the best opening for a speech?", options: ["'Um, so today I will talk about...'", "'Good morning. Did you know that 75% of people fear public speaking?'", "'I'm not very good at this but...'", "'So basically what I want to say is...'"], answer: 1, explanation: "A strong opening with a surprising fact immediately grabs audience attention." },
       { category: "Tone & Pronunciation", q: "How is the 'g' pronounced in 'gnome'?", options: ["Hard g sound", "Soft j sound", "Silent", "Like 'n'"], answer: 2, explanation: "In 'gnome', the 'g' is silent. It is pronounced 'nome'." },
-      { category: "Tone & Pronunciation", q: "Which word has the stress on the second syllable?", options: ["ALpha", "beGIN", "TAble", "OPen"], answer: 1, explanation: "'beGIN' has stress on the second syllable. The others are all stressed on the first syllable." },
-      { category: "Speech Clarity", q: "What is the purpose of a 'power pause'?", options: ["To forget your speech", "To create dramatic emphasis and let ideas sink in", "To drink water", "To check your notes"], answer: 1, explanation: "A power pause of 2-3 seconds after a key point gives it weight and lets the audience absorb it." },
-      { category: "Tone & Pronunciation", q: "Which of these is an example of 'liaison' in speech?", options: ["Saying each word separately", "Linking the end of one word to the start of the next", "Speaking louder", "Pausing between each word"], answer: 1, explanation: "Liaison connects words smoothly in natural speech, like 'an apple' sounding like 'a-napple'." }
+      { category: "Tone & Pronunciation", q: "Which word has the stress on the second syllable?", options: ["ALpha", "beGIN", "TAble", "OPen"], answer: 1, explanation: "'beGIN' has stress on the second syllable." },
+      { category: "Speech Clarity", q: "What is the purpose of a 'power pause'?", options: ["To forget your speech", "To create dramatic emphasis and let ideas sink in", "To drink water", "To check your notes"], answer: 1, explanation: "A power pause after a key point gives it weight and lets the audience absorb it." },
+      { category: "Tone & Pronunciation", q: "Which of these is an example of 'liaison' in speech?", options: ["Saying each word separately", "Linking the end of one word to the start of the next", "Speaking louder", "Pausing between each word"], answer: 1, explanation: "Liaison connects words smoothly in natural speech." }
     ]
   },
   4: {
-    tip: "💡 Day 4 Tip: Resonance gives your voice warmth and depth. Speak from your chest, not your throat. A chest voice carries authority; a throat voice sounds strained.",
+    tip: "💡 Day 4 Tip: Resonance gives your voice warmth and depth. Speak from your chest, not your throat.",
     questions: [
-      { category: "Tone & Pronunciation", q: "What is 'resonance' in voice production?", options: ["How fast you speak", "The vibration and amplification of sound in your body", "How clearly you pronounce words", "The pitch of your voice"], answer: 1, explanation: "Resonance is the amplification of sound using body cavities — chest resonance gives a rich, warm voice." },
-      { category: "Speech Clarity", q: "Which transition word best shows contrast?", options: ["Furthermore", "However", "Therefore", "Similarly"], answer: 1, explanation: "'However' signals a contrast or opposing idea, making speech logic clear to the audience." },
-      { category: "Tone & Pronunciation", q: "The word 'mischievous' has how many syllables?", options: ["4 (mis-chie-vi-ous)", "3 (mis-che-vous)", "2 (mis-chvous)", "5"], answer: 1, explanation: "'Mischievous' has 3 syllables: MIS-che-vous. Not mis-CHEE-vee-us as commonly mispronounced." },
-      { category: "Speech Clarity", q: "What does 'pacing' mean in speech delivery?", options: ["Walking while speaking", "The speed and rhythm of your speech", "Using hand gestures", "Making eye contact"], answer: 1, explanation: "Pacing is the variation of speed — slowing down for important points, speeding up for less critical parts." },
-      { category: "Tone & Pronunciation", q: "Which word contains a schwa sound (ə)?", options: ["cat", "about", "hit", "met"], answer: 1, explanation: "The first 'a' in 'about' is a schwa — the most common vowel sound in English, a neutral 'uh' sound." },
-      { category: "Tone & Pronunciation", q: "What is 'assimilation' in pronunciation?", options: ["Learning new words", "When sounds change due to neighboring sounds", "Stressing syllables", "Speaking louder"], answer: 1, explanation: "Assimilation is when sounds blend together, like 'don't you' becoming 'don-cha' in natural speech." },
-      { category: "Speech Clarity", q: "A speech without structure is like:", options: ["A song without music", "A book without pages", "A map without a destination", "All of the above"], answer: 3, explanation: "Structure gives your speech direction — without it, your audience gets lost and disengaged." },
+      { category: "Tone & Pronunciation", q: "What is 'resonance' in voice production?", options: ["How fast you speak", "The vibration and amplification of sound in your body", "How clearly you pronounce words", "The pitch of your voice"], answer: 1, explanation: "Resonance is the amplification of sound using body cavities." },
+      { category: "Speech Clarity", q: "Which transition word best shows contrast?", options: ["Furthermore", "However", "Therefore", "Similarly"], answer: 1, explanation: "'However' signals a contrast or opposing idea." },
+      { category: "Tone & Pronunciation", q: "The word 'mischievous' has how many syllables?", options: ["4 (mis-chie-vi-ous)", "3 (mis-che-vous)", "2 (mis-chvous)", "5"], answer: 1, explanation: "'Mischievous' has 3 syllables: MIS-che-vous." },
+      { category: "Speech Clarity", q: "What does 'pacing' mean in speech delivery?", options: ["Walking while speaking", "The speed and rhythm of your speech", "Using hand gestures", "Making eye contact"], answer: 1, explanation: "Pacing is the variation of speed in your speech." },
+      { category: "Tone & Pronunciation", q: "Which word contains a schwa sound (ə)?", options: ["cat", "about", "hit", "met"], answer: 1, explanation: "The first 'a' in 'about' is a schwa — the most common vowel sound in English." },
+      { category: "Tone & Pronunciation", q: "What is 'assimilation' in pronunciation?", options: ["Learning new words", "When sounds change due to neighboring sounds", "Stressing syllables", "Speaking louder"], answer: 1, explanation: "Assimilation is when sounds blend together in natural speech." },
+      { category: "Speech Clarity", q: "A speech without structure is like:", options: ["A song without music", "A book without pages", "A map without a destination", "All of the above"], answer: 3, explanation: "Structure gives your speech direction." },
       { category: "Tone & Pronunciation", q: "The 'p' in 'pneumonia' is:", options: ["Pronounced normally", "Silent", "Aspirated", "Nasal"], answer: 1, explanation: "In 'pneumonia', the 'p' is silent. It is pronounced 'new-MO-nia'." },
-      { category: "Speech Clarity", q: "Why is a conversational tone preferred in speeches?", options: ["It sounds rehearsed", "It feels natural and relatable to the audience", "It removes all emotion", "It requires no preparation"], answer: 1, explanation: "A conversational tone makes the audience feel you are speaking WITH them, not AT them." },
-      { category: "Tone & Pronunciation", q: "Which sentence demonstrates correct emphasis?", options: ["I LOVE eating pizza", "I love EATING pizza", "I love eating PIZZA", "All change the meaning"], answer: 3, explanation: "Stressing different words shifts the focus of meaning — emphasis is a powerful tool in spoken English." }
+      { category: "Speech Clarity", q: "Why is a conversational tone preferred in speeches?", options: ["It sounds rehearsed", "It feels natural and relatable to the audience", "It removes all emotion", "It requires no preparation"], answer: 1, explanation: "A conversational tone makes the audience feel you are speaking WITH them." },
+      { category: "Tone & Pronunciation", q: "Which sentence demonstrates correct emphasis?", options: ["I LOVE eating pizza", "I love EATING pizza", "I love eating PIZZA", "All change the meaning"], answer: 3, explanation: "Stressing different words shifts the focus of meaning." }
     ]
   },
   5: {
-    tip: "💡 Day 5 Tip: The rule of three is powerful in speech — group ideas in threes. 'Life, liberty, and the pursuit of happiness.' Three-part structures are memorable and satisfying to listeners.",
+    tip: "💡 Day 5 Tip: The rule of three is powerful in speech — group ideas in threes for maximum impact.",
     questions: [
-      { category: "Speech Clarity", q: "What is the 'rule of three' in speechmaking?", options: ["Speak for exactly 3 minutes", "Group ideas in sets of three for impact", "Use three pauses per sentence", "Have three main slides"], answer: 1, explanation: "The rule of three creates rhythm and memorability. Audiences remember information better in threes." },
-      { category: "Tone & Pronunciation", q: "The word 'debris' is pronounced:", options: ["deb-ris", "deh-bree", "de-BRIS", "DEB-ree"], answer: 1, explanation: "'Debris' comes from French and is pronounced 'deh-BREE' — the 's' is silent." },
-      { category: "Tone & Pronunciation", q: "What is 'elision' in connected speech?", options: ["Adding extra sounds", "Dropping sounds for easier pronunciation", "Stressing syllables", "Changing pitch"], answer: 1, explanation: "Elision is dropping sounds in connected speech, like 'next day' becoming 'nex day' naturally." },
-      { category: "Speech Clarity", q: "What makes a conclusion memorable?", options: ["Introducing new points", "Summarizing and ending with a call to action or powerful quote", "Saying 'that's all'", "Reading from notes"], answer: 1, explanation: "A strong conclusion reinforces your message and leaves the audience with something to remember or do." },
-      { category: "Tone & Pronunciation", q: "In 'I can do it' vs 'I can't do it', the key difference in speech is:", options: ["Volume", "Speed", "Vowel length in can/can't", "Pitch only"], answer: 2, explanation: "In speech, 'can' has a short schwa sound while 'can't' has a longer vowel — this is crucial for clarity." },
-      { category: "Speech Clarity", q: "What is 'signposting' in a speech?", options: ["Using visual signs", "Telling the audience where you are in the speech", "Pointing at slides", "Using hand gestures"], answer: 1, explanation: "Signposting uses phrases like 'Moving on to my second point' to help the audience follow your structure." },
-      { category: "Tone & Pronunciation", q: "The word 'entrepreneur' originates from which language?", options: ["Latin", "French", "Spanish", "German"], answer: 1, explanation: "'Entrepreneur' comes from French — pronounced 'on-truh-pruh-NUR'. The French origin explains its unique pronunciation." },
-      { category: "Tone & Pronunciation", q: "What is 'retroflex' pronunciation?", options: ["Speaking backwards", "Curling the tongue back to produce sounds like 'r'", "Nasal sounds", "Lip sounds"], answer: 1, explanation: "Retroflex sounds involve curling the tongue tip back, common in Indian English pronunciation of 'r', 't', 'd'." },
-      { category: "Speech Clarity", q: "Which is a characteristic of an effective speech opener?", options: ["Starting with your name only", "Being vague about the topic", "Creating immediate curiosity or relevance", "Reading statistics slowly"], answer: 2, explanation: "An effective opener hooks the audience immediately through a story, question, quote, or surprising fact." },
-      { category: "Tone & Pronunciation", q: "What happens to the voice when a speaker is nervous?", options: ["It becomes deeper", "It rises in pitch and becomes faster", "It slows down", "It becomes louder"], answer: 1, explanation: "Nervousness triggers adrenaline which tightens the vocal cords, raising pitch and increasing speaking rate." }
+      { category: "Speech Clarity", q: "What is the 'rule of three' in speechmaking?", options: ["Speak for exactly 3 minutes", "Group ideas in sets of three for impact", "Use three pauses per sentence", "Have three main slides"], answer: 1, explanation: "The rule of three creates rhythm and memorability." },
+      { category: "Tone & Pronunciation", q: "The word 'debris' is pronounced:", options: ["deb-ris", "deh-bree", "de-BRIS", "DEB-ree"], answer: 1, explanation: "'Debris' is pronounced 'deh-BREE' — the 's' is silent." },
+      { category: "Tone & Pronunciation", q: "What is 'elision' in connected speech?", options: ["Adding extra sounds", "Dropping sounds for easier pronunciation", "Stressing syllables", "Changing pitch"], answer: 1, explanation: "Elision is dropping sounds in connected speech." },
+      { category: "Speech Clarity", q: "What makes a conclusion memorable?", options: ["Introducing new points", "Summarizing and ending with a call to action or powerful quote", "Saying 'that's all'", "Reading from notes"], answer: 1, explanation: "A strong conclusion reinforces your message." },
+      { category: "Tone & Pronunciation", q: "In 'I can do it' vs 'I can't do it', the key difference in speech is:", options: ["Volume", "Speed", "Vowel length in can/can't", "Pitch only"], answer: 2, explanation: "'can' has a short schwa sound while 'can't' has a longer vowel." },
+      { category: "Speech Clarity", q: "What is 'signposting' in a speech?", options: ["Using visual signs", "Telling the audience where you are in the speech", "Pointing at slides", "Using hand gestures"], answer: 1, explanation: "Signposting uses phrases to help the audience follow your structure." },
+      { category: "Tone & Pronunciation", q: "The word 'entrepreneur' originates from which language?", options: ["Latin", "French", "Spanish", "German"], answer: 1, explanation: "'Entrepreneur' comes from French." },
+      { category: "Tone & Pronunciation", q: "What is 'retroflex' pronunciation?", options: ["Speaking backwards", "Curling the tongue back to produce sounds like 'r'", "Nasal sounds", "Lip sounds"], answer: 1, explanation: "Retroflex sounds involve curling the tongue tip back." },
+      { category: "Speech Clarity", q: "Which is a characteristic of an effective speech opener?", options: ["Starting with your name only", "Being vague about the topic", "Creating immediate curiosity or relevance", "Reading statistics slowly"], answer: 2, explanation: "An effective opener hooks the audience immediately." },
+      { category: "Tone & Pronunciation", q: "What happens to the voice when a speaker is nervous?", options: ["It becomes deeper", "It rises in pitch and becomes faster", "It slows down", "It becomes louder"], answer: 1, explanation: "Nervousness tightens the vocal cords, raising pitch and increasing speaking rate." }
     ]
   },
   6: {
-    tip: "💡 Day 6 Tip: Silence is a speaker's secret weapon. A 3-second pause feels long to you but powerful to your audience. Never rush to fill silence — let it work for you.",
+    tip: "💡 Day 6 Tip: Silence is a speaker's secret weapon. A 3-second pause feels long to you but powerful to your audience.",
     questions: [
-      { category: "Speech Clarity", q: "What is 'vocal variety'?", options: ["Using different languages", "Changing pitch, pace, and volume for impact", "Having multiple speakers", "Using different accents"], answer: 1, explanation: "Vocal variety means consciously varying pitch, pace, volume, and pause to keep the audience engaged." },
-      { category: "Tone & Pronunciation", q: "The 'gh' in 'though' is:", options: ["Pronounced as 'f'", "Pronounced as 'g'", "Silent", "Pronounced as 'ch'"], answer: 2, explanation: "In 'though', 'gh' is silent. Compare with 'tough' where 'gh' sounds like 'f' — English is tricky!" },
-      { category: "Tone & Pronunciation", q: "What is 'aspiration' in pronunciation?", options: ["Breathing deeply", "A puff of air after certain consonants like 'p', 't', 'k'", "Nasal sounds", "Vowel lengthening"], answer: 1, explanation: "Aspiration is the burst of air after unvoiced stops like 'p', 't', 'k' at the start of stressed syllables." },
-      { category: "Speech Clarity", q: "What does 'active listening' in an audience mean for a speaker?", options: ["Nothing, speakers don't need to worry about it", "The speaker should adjust based on audience reactions", "The audience should take notes", "Speakers should speak louder"], answer: 1, explanation: "An effective speaker reads audience reactions and adapts — slowing down, clarifying, or adding examples as needed." },
-      { category: "Tone & Pronunciation", q: "Which phrase demonstrates 'weak form' pronunciation?", options: ["'AND' stressed in every sentence", "'and' reduced to 'n' in connected speech", "Pausing before 'and'", "Capitalizing AND"], answer: 1, explanation: "Function words like 'and', 'of', 'the' use weak forms in natural speech — they become shorter and quieter." },
-      { category: "Tone & Pronunciation", q: "The word 'cache' is pronounced:", options: ["catch", "cash", "ca-shay", "ca-che"], answer: 1, explanation: "'Cache' is pronounced 'cash' — not 'ca-shay'. It comes from French but the pronunciation is anglicized." },
-      { category: "Speech Clarity", q: "What is 'anaphora' in speechmaking?", options: ["A type of microphone", "Repeating a phrase at the beginning of successive sentences", "A breathing technique", "A type of pause"], answer: 1, explanation: "Anaphora is a powerful rhetorical device — 'I have a dream... I have a dream...' creates rhythm and emphasis." },
-      { category: "Tone & Pronunciation", q: "In English, stress in a sentence usually falls on:", options: ["Articles and prepositions", "Content words like nouns and verbs", "Every word equally", "Only the last word"], answer: 1, explanation: "Content words (nouns, verbs, adjectives, adverbs) carry meaning and receive stress. Function words are usually unstressed." },
-      { category: "Speech Clarity", q: "What is the danger of reading directly from a script?", options: ["It ensures accuracy", "It loses eye contact and natural delivery", "It saves time", "It reduces nervousness"], answer: 1, explanation: "Reading from a script breaks eye contact, reduces authenticity, and makes delivery sound robotic." },
-      { category: "Tone & Pronunciation", q: "The term 'prosody' refers to:", options: ["A type of poetry", "The rhythm, stress, and intonation patterns of speech", "Vocabulary choice", "Speech disorders"], answer: 1, explanation: "Prosody is the musicality of language — the patterns of stress, timing, and intonation that give speech its character." }
+      { category: "Speech Clarity", q: "What is 'vocal variety'?", options: ["Using different languages", "Changing pitch, pace, and volume for impact", "Having multiple speakers", "Using different accents"], answer: 1, explanation: "Vocal variety means consciously varying pitch, pace, and volume." },
+      { category: "Tone & Pronunciation", q: "The 'gh' in 'though' is:", options: ["Pronounced as 'f'", "Pronounced as 'g'", "Silent", "Pronounced as 'ch'"], answer: 2, explanation: "In 'though', 'gh' is silent." },
+      { category: "Tone & Pronunciation", q: "What is 'aspiration' in pronunciation?", options: ["Breathing deeply", "A puff of air after certain consonants like 'p', 't', 'k'", "Nasal sounds", "Vowel lengthening"], answer: 1, explanation: "Aspiration is the burst of air after unvoiced stops." },
+      { category: "Speech Clarity", q: "What does 'active listening' in an audience mean for a speaker?", options: ["Nothing, speakers don't need to worry about it", "The speaker should adjust based on audience reactions", "The audience should take notes", "Speakers should speak louder"], answer: 1, explanation: "An effective speaker reads audience reactions and adapts." },
+      { category: "Tone & Pronunciation", q: "Which phrase demonstrates 'weak form' pronunciation?", options: ["'AND' stressed in every sentence", "'and' reduced to 'n' in connected speech", "Pausing before 'and'", "Capitalizing AND"], answer: 1, explanation: "Function words use weak forms in natural speech." },
+      { category: "Tone & Pronunciation", q: "The word 'cache' is pronounced:", options: ["catch", "cash", "ca-shay", "ca-che"], answer: 1, explanation: "'Cache' is pronounced 'cash'." },
+      { category: "Speech Clarity", q: "What is 'anaphora' in speechmaking?", options: ["A type of microphone", "Repeating a phrase at the beginning of successive sentences", "A breathing technique", "A type of pause"], answer: 1, explanation: "Anaphora creates rhythm and emphasis through repetition." },
+      { category: "Tone & Pronunciation", q: "In English, stress in a sentence usually falls on:", options: ["Articles and prepositions", "Content words like nouns and verbs", "Every word equally", "Only the last word"], answer: 1, explanation: "Content words carry meaning and receive stress." },
+      { category: "Speech Clarity", q: "What is the danger of reading directly from a script?", options: ["It ensures accuracy", "It loses eye contact and natural delivery", "It saves time", "It reduces nervousness"], answer: 1, explanation: "Reading from a script breaks eye contact and reduces authenticity." },
+      { category: "Tone & Pronunciation", q: "The term 'prosody' refers to:", options: ["A type of poetry", "The rhythm, stress, and intonation patterns of speech", "Vocabulary choice", "Speech disorders"], answer: 1, explanation: "Prosody is the musicality of language." }
     ]
   },
   7: {
-    tip: "💡 Day 7 Tip: You've completed the full week! Master speakers never stop learning. Revisit earlier days, practice with real audiences, and use My Eloquence's practice tool daily.",
+    tip: "💡 Day 7 Tip: You've completed the full week! Master speakers never stop learning. Keep practicing daily!",
     questions: [
-      { category: "Tone & Pronunciation", q: "What is 'coarticulation' in speech?", options: ["Speaking two languages", "Overlapping articulation of consecutive sounds", "Using hand gestures", "Voice projection"], answer: 1, explanation: "Coarticulation means sounds overlap and influence each other in continuous speech — this is why native speakers sound fluent." },
-      { category: "Speech Clarity", q: "Which rhetorical device asks a question the speaker then answers?", options: ["Metaphor", "Hyperbole", "Rhetorical question", "Anaphora"], answer: 2, explanation: "A rhetorical question is posed for effect, not to get an answer — it engages the audience mentally." },
-      { category: "Tone & Pronunciation", q: "The word 'quinoa' is pronounced:", options: ["kwin-o-a", "KEEN-wah", "kwi-NO-ah", "kee-NO-ah"], answer: 1, explanation: "'Quinoa' is pronounced 'KEEN-wah' — a common mispronunciation since the spelling is misleading." },
-      { category: "Speech Clarity", q: "What is 'ethos' in public speaking?", options: ["The emotion in speech", "The speaker's credibility and trustworthiness", "The logic of arguments", "The structure of speech"], answer: 1, explanation: "Ethos is one of Aristotle's three modes of persuasion — it refers to establishing the speaker's authority and credibility." },
-      { category: "Tone & Pronunciation", q: "What causes 'upspeak' or 'high rising terminal'?", options: ["Confidence", "Every statement ending with a rising pitch like a question", "Loud volume", "Fast speech"], answer: 1, explanation: "Upspeak makes statements sound like questions, reducing perceived confidence. It's common but should be avoided in formal speaking." },
-      { category: "Speech Clarity", q: "What is 'logos' in persuasive speaking?", options: ["A company logo used in speech", "Using logic, facts, and reasoning to persuade", "Emotional appeal", "Speaker credibility"], answer: 1, explanation: "Logos is the logical appeal — using evidence, statistics, and reasoning to support your argument." },
-      { category: "Tone & Pronunciation", q: "What is the 'glottal stop'?", options: ["A breathing technique", "Closing the glottis to create a sound, replacing 't' in words like 'button'", "A type of accent", "A pronunciation error"], answer: 1, explanation: "The glottal stop (ʔ) is a consonant sound made by closing the vocal folds — common in British English for words like 'bu'on' (button)." },
-      { category: "Speech Clarity", q: "What is 'pathos' in speechmaking?", options: ["Using data and logic", "Appealing to the audience's emotions", "Speaker's credibility", "Speech structure"], answer: 1, explanation: "Pathos is the emotional appeal — connecting with your audience's feelings, values, and experiences to persuade." },
-      { category: "Tone & Pronunciation", q: "Advanced speakers use 'nuclear stress' to:", options: ["Speak about science", "Place the most prominent stress on the most important word in a phrase", "Avoid all stress", "Speak in monotone"], answer: 1, explanation: "Nuclear stress is the primary emphasis in an utterance — skilled speakers place it deliberately to control meaning." },
-      { category: "Speech Clarity", q: "After completing 7 days of learning, what is the MOST important next step?", options: ["Stop practicing", "Read more theory only", "Apply the skills through real practice and recording yourself", "Wait for more lessons"], answer: 2, explanation: "Knowledge without practice is incomplete. Record yourself speaking, review the feedback, and keep improving daily!" }
+      { category: "Tone & Pronunciation", q: "What is 'coarticulation' in speech?", options: ["Speaking two languages", "Overlapping articulation of consecutive sounds", "Using hand gestures", "Voice projection"], answer: 1, explanation: "Coarticulation means sounds overlap and influence each other in continuous speech." },
+      { category: "Speech Clarity", q: "Which rhetorical device asks a question the speaker then answers?", options: ["Metaphor", "Hyperbole", "Rhetorical question", "Anaphora"], answer: 2, explanation: "A rhetorical question is posed for effect, not to get an answer." },
+      { category: "Tone & Pronunciation", q: "The word 'quinoa' is pronounced:", options: ["kwin-o-a", "KEEN-wah", "kwi-NO-ah", "kee-NO-ah"], answer: 1, explanation: "'Quinoa' is pronounced 'KEEN-wah'." },
+      { category: "Speech Clarity", q: "What is 'ethos' in public speaking?", options: ["The emotion in speech", "The speaker's credibility and trustworthiness", "The logic of arguments", "The structure of speech"], answer: 1, explanation: "Ethos refers to establishing the speaker's authority and credibility." },
+      { category: "Tone & Pronunciation", q: "What causes 'upspeak' or 'high rising terminal'?", options: ["Confidence", "Every statement ending with a rising pitch like a question", "Loud volume", "Fast speech"], answer: 1, explanation: "Upspeak makes statements sound like questions, reducing perceived confidence." },
+      { category: "Speech Clarity", q: "What is 'logos' in persuasive speaking?", options: ["A company logo used in speech", "Using logic, facts, and reasoning to persuade", "Emotional appeal", "Speaker credibility"], answer: 1, explanation: "Logos is the logical appeal — using evidence and reasoning." },
+      { category: "Tone & Pronunciation", q: "What is the 'glottal stop'?", options: ["A breathing technique", "Closing the glottis to create a sound, replacing 't' in words like 'button'", "A type of accent", "A pronunciation error"], answer: 1, explanation: "The glottal stop is a consonant sound made by closing the vocal folds." },
+      { category: "Speech Clarity", q: "What is 'pathos' in speechmaking?", options: ["Using data and logic", "Appealing to the audience's emotions", "Speaker's credibility", "Speech structure"], answer: 1, explanation: "Pathos is the emotional appeal." },
+      { category: "Tone & Pronunciation", q: "Advanced speakers use 'nuclear stress' to:", options: ["Speak about science", "Place the most prominent stress on the most important word in a phrase", "Avoid all stress", "Speak in monotone"], answer: 1, explanation: "Nuclear stress is the primary emphasis in an utterance." },
+      { category: "Speech Clarity", q: "After completing 7 days of learning, what is the MOST important next step?", options: ["Stop practicing", "Read more theory only", "Apply the skills through real practice and recording yourself", "Wait for more lessons"], answer: 2, explanation: "Knowledge without practice is incomplete. Record yourself and keep improving daily!" }
     ]
   }
 };
 
-// ===== STREAK LOGIC =====
-let streakData = JSON.parse(localStorage.getItem('streakData')) || {
-  currentDay: 1,
-  lastCompletedDate: null,
-  completedDays: [],
-  frozen: false
-};
+  let streakData = JSON.parse(localStorage.getItem('streakData')) || {
+    currentDay: 1, lastCompletedDate: null, completedDays: [], frozen: false
+  };
 
-let current = 0;
-let score = 0;
-let activeDay = streakData.currentDay;
+  let current = 0, score = 0, activeDay = streakData.currentDay;
 
-function getTodayStr() {
-  return new Date().toISOString().split('T')[0];
-}
+  function getTodayStr() { return new Date().toISOString().split('T')[0]; }
+  function getYesterdayStr() { const d = new Date(); d.setDate(d.getDate() - 1); return d.toISOString().split('T')[0]; }
 
-function getYesterdayStr() {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  return d.toISOString().split('T')[0];
-}
+  function saveStreak() { localStorage.setItem('streakData', JSON.stringify(streakData)); }
 
-function saveStreak() {
-  localStorage.setItem('streakData', JSON.stringify(streakData));
-}
-
-function buildStreakBar() {
-  const bar = document.getElementById('streakBar');
-  bar.innerHTML = '';
-  for (let d = 1; d <= 7; d++) {
-    const div = document.createElement('div');
-    div.className = 'streak-day';
-
-    const circle = document.createElement('div');
-    circle.className = 'streak-circle';
-
-    if (streakData.completedDays.includes(d)) {
-      circle.classList.add('done');
-      circle.textContent = '✓';
-    } else if (d === streakData.currentDay) {
-      circle.classList.add('active');
-      circle.textContent = d;
-    } else if (d < streakData.currentDay) {
-      circle.classList.add('frozen');
-      circle.textContent = d;
-    } else {
-      circle.classList.add('locked');
-      circle.textContent = d;
+  function buildStreakBar() {
+    const bar = document.getElementById('streakBar');
+    bar.innerHTML = '';
+    for (let d = 1; d <= 7; d++) {
+      const div = document.createElement('div');
+      div.className = 'streak-day';
+      const circle = document.createElement('div');
+      circle.className = 'streak-circle';
+      if (streakData.completedDays.includes(d)) { circle.classList.add('done'); circle.textContent = '✓'; }
+      else if (d === streakData.currentDay) { circle.classList.add('active'); circle.textContent = d; }
+      else if (d < streakData.currentDay) { circle.classList.add('frozen'); circle.textContent = d; }
+      else { circle.classList.add('locked'); circle.textContent = d; }
+      const label = document.createElement('div');
+      label.className = 'streak-label';
+      label.textContent = `Day ${d}`;
+      div.appendChild(circle);
+      div.appendChild(label);
+      bar.appendChild(div);
     }
-
-    const label = document.createElement('div');
-    label.className = 'streak-label';
-    label.textContent = `Day ${d}`;
-
-    div.appendChild(circle);
-    div.appendChild(label);
-    bar.appendChild(div);
+    const completed = streakData.completedDays.length;
+    document.getElementById('streakCount').textContent = `🔥 ${completed} Day${completed !== 1 ? 's' : ''} Completed`;
+    document.getElementById('streakSub').textContent = completed === 7 ? 'You completed the full streak! 🎉' : `Keep going! Day ${streakData.currentDay} is unlocked.`;
   }
 
-  const count = document.getElementById('streakCount');
-  const sub = document.getElementById('streakSub');
-  const completed = streakData.completedDays.length;
-  count.textContent = `🔥 ${completed} Day${completed !== 1 ? 's' : ''} Completed`;
-  sub.textContent = completed === 7 ? 'You completed the full streak! 🎉' : `Keep going! Day ${streakData.currentDay} is unlocked.`;
-}
-
-function checkStreakStatus() {
-  const today = getTodayStr();
-  const yesterday = getYesterdayStr();
-  const last = streakData.lastCompletedDate;
-
-  // Already completed today
-  if (last === today && streakData.completedDays.includes(streakData.currentDay - 1 <= 0 ? 1 : streakData.currentDay - 1)) {
-    // Check if today's day is already done
-    const todayDay = streakData.currentDay - 1;
-    if (streakData.completedDays.includes(todayDay) || last === today) {
-      showDoneCard();
-      return;
-    }
+  function checkStreakStatus() {
+    const today = getTodayStr();
+    const yesterday = getYesterdayStr();
+    const last = streakData.lastCompletedDate;
+    if (last === today) { showDoneCard(); return; }
+    if (last && last !== today && last !== yesterday) {
+      streakData.frozen = true; saveStreak();
+      document.getElementById('frozenMsg').style.display = 'block';
+    } else { streakData.frozen = false; }
+    if (streakData.currentDay > 7) { showDoneCard(); return; }
+    showQuiz();
   }
 
-  // Missed more than yesterday — freeze
-  if (last && last !== today && last !== yesterday) {
-    streakData.frozen = true;
-    saveStreak();
-    document.getElementById('frozenMsg').style.display = 'block';
-  } else {
-    streakData.frozen = false;
+  function showDoneCard() {
+    document.getElementById('quizCard').style.display = 'none';
+    document.getElementById('doneCard').style.display = 'block';
   }
 
-  if (streakData.currentDay > 7) {
-    showDoneCard();
-    return;
-  }
-
-  // Show quiz
-  showQuiz();
-}
-
-function showDoneCard() {
-  document.getElementById('quizCard').style.display = 'none';
-  document.getElementById('doneCard').style.display = 'block';
-}
-
-function showQuiz() {
-  current = 0; score = 0;
-  activeDay = streakData.currentDay;
-  document.getElementById('quizCard').style.display = 'block';
-  loadQuestion();
-}
-
-function loadQuestion() {
-  const dayQ = dayContent[activeDay];
-  const q = dayQ.questions[current];
-  const total = dayQ.questions.length;
-
-  document.getElementById('qNumber').textContent = `Question ${current + 1} of ${total} — Day ${activeDay}`;
-  document.getElementById('progressBar').style.width = `${((current + 1) / total) * 100}%`;
-  document.getElementById('tipBox').innerHTML = dayQ.tip;
-  document.getElementById('qCategory').textContent = q.category;
-  document.getElementById('qCategory').className = `q-category ${q.category === 'Tone & Pronunciation' ? 'cat-tone' : 'cat-clarity'}`;
-  document.getElementById('qText').textContent = q.q;
-
-  const container = document.getElementById('optionsContainer');
-  container.innerHTML = '';
-  q.options.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'option';
-    btn.textContent = opt;
-    btn.onclick = () => selectAnswer(i, btn);
-    container.appendChild(btn);
-  });
-
-  document.getElementById('explanationBox').className = 'explanation-box';
-  document.getElementById('explanationBox').textContent = '';
-  document.getElementById('nextBtn').style.display = 'none';
-}
-
-function selectAnswer(index, btn) {
-  const q = dayContent[activeDay].questions[current];
-  const allOptions = document.querySelectorAll('.option');
-  allOptions.forEach(o => o.classList.add('disabled'));
-
-  if (index === q.answer) {
-    btn.classList.add('correct');
-    score++;
-  } else {
-    btn.classList.add('wrong');
-    allOptions[q.answer].classList.add('correct');
-  }
-
-  const expBox = document.getElementById('explanationBox');
-  expBox.textContent = `📖 ${q.explanation}`;
-  expBox.classList.add('show');
-
-  const nextBtn = document.getElementById('nextBtn');
-  nextBtn.style.display = 'flex';
-  nextBtn.textContent = current === dayContent[activeDay].questions.length - 1 ? '🏁 See Results' : 'Next →';
-}
-
-function nextQuestion() {
-  current++;
-  if (current < dayContent[activeDay].questions.length) {
+  function showQuiz() {
+    current = 0; score = 0;
+    activeDay = streakData.currentDay;
+    document.getElementById('quizCard').style.display = 'block';
     loadQuestion();
-  } else {
-    showResults();
   }
-}
 
-function showResults() {
-  document.getElementById('quizCard').style.display = 'none';
-  document.getElementById('resultCard').style.display = 'block';
-  document.getElementById('scoreNum').textContent = score;
-
-  let msg = '';
-  if (score <= 4) msg = "Keep practicing! Review today's tips and try again tomorrow.";
-  else if (score <= 7) msg = "Good effort! You're making solid progress. Keep the streak going!";
-  else msg = "Excellent work! You've mastered today's content. See you tomorrow! 🔥";
-
-  document.getElementById('resultMsg').textContent = msg;
-
-  // Mark day as complete
-  if (!streakData.completedDays.includes(activeDay)) {
-    streakData.completedDays.push(activeDay);
-    streakData.currentDay = activeDay + 1;
-    streakData.lastCompletedDate = getTodayStr();
-    streakData.frozen = false;
-    saveStreak();
-    buildStreakBar();
+  function loadQuestion() {
+    const dayQ = dayContent[activeDay];
+    const q = dayQ.questions[current];
+    const total = dayQ.questions.length;
+    document.getElementById('qNumber').textContent = `Question ${current + 1} of ${total} — Day ${activeDay}`;
+    document.getElementById('progressBar').style.width = `${((current + 1) / total) * 100}%`;
+    document.getElementById('tipBox').innerHTML = dayQ.tip;
+    document.getElementById('qCategory').textContent = q.category;
+    document.getElementById('qCategory').className = `q-category ${q.category === 'Tone & Pronunciation' ? 'cat-tone' : 'cat-clarity'}`;
+    document.getElementById('qText').textContent = q.q;
+    const optContainer = document.getElementById('optionsContainer');
+    optContainer.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.textContent = opt;
+      btn.onclick = () => selectAnswer(i, btn);
+      optContainer.appendChild(btn);
+    });
+    document.getElementById('explanationBox').className = 'explanation-box';
+    document.getElementById('explanationBox').textContent = '';
+    document.getElementById('nextBtn').style.display = 'none';
   }
-}
 
-// Dark mode
-function toggleDark() {
-  document.body.classList.toggle('dark');
-  const btn = document.getElementById('darkToggle');
-  btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-  localStorage.setItem('dark', document.body.classList.contains('dark'));
-}
-if (localStorage.getItem('dark') === 'true') {
-  document.body.classList.add('dark');
-  document.getElementById('darkToggle').textContent = '☀️';
-}
+  function selectAnswer(index, btn) {
+    const q = dayContent[activeDay].questions[current];
+    document.querySelectorAll('.option').forEach(o => o.classList.add('disabled'));
+    if (index === q.answer) { btn.classList.add('correct'); score++; }
+    else { btn.classList.add('wrong'); document.querySelectorAll('.option')[q.answer].classList.add('correct'); }
+    const expBox = document.getElementById('explanationBox');
+    expBox.textContent = `📖 ${q.explanation}`;
+    expBox.classList.add('show');
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.style.display = 'flex';
+    nextBtn.textContent = current === dayContent[activeDay].questions.length - 1 ? '🏁 See Results' : 'Next →';
+  }
 
-// Particles
-const container = document.getElementById('particles');
-for (let i = 0; i < 18; i++) {
-  const p = document.createElement('div');
-  p.className = 'particle';
-  p.style.left = Math.random() * 100 + 'vw';
-  p.style.animationDelay = Math.random() * 8 + 's';
-  p.style.animationDuration = (6 + Math.random() * 8) + 's';
-  p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
-  p.style.opacity = 0.15 + Math.random() * 0.25;
-  container.appendChild(p);
-}
+  function nextQuestion() {
+    current++;
+    if (current < dayContent[activeDay].questions.length) loadQuestion();
+    else showResults();
+  }
 
-buildStreakBar();
-checkStreakStatus();
+  function showResults() {
+    document.getElementById('quizCard').style.display = 'none';
+    document.getElementById('resultCard').style.display = 'block';
+    document.getElementById('scoreNum').textContent = score;
+    let msg = '';
+    if (score <= 4) msg = "Keep practicing! Review today's tips and try again tomorrow.";
+    else if (score <= 7) msg = "Good effort! You're making solid progress. Keep the streak going!";
+    else msg = "Excellent work! You've mastered today's content. See you tomorrow! 🔥";
+    document.getElementById('resultMsg').textContent = msg;
+    if (!streakData.completedDays.includes(activeDay)) {
+      streakData.completedDays.push(activeDay);
+      streakData.currentDay = activeDay + 1;
+      streakData.lastCompletedDate = getTodayStr();
+      streakData.frozen = false;
+      saveStreak();
+      buildStreakBar();
+    }
+  }
+
+  buildStreakBar();
+  checkStreakStatus();
 </script>
+
 <script type="module" src="login-widget.js"></script>
 </body>
 </html>

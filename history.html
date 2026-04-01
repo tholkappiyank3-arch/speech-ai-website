@@ -20,10 +20,10 @@
     <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="diagnostic.html">Diagnostic</a>
-      <a href="learn.html">Tone & Pronunciation</a>
+      <a href="learn.html">Learn</a>
       <a href="exercise.html">Practice</a>
       <a href="history.html" class="active">History</a>
-      <button class="dark-toggle" id="darkToggle">🌙</button>
+      <button class="dark-toggle" id="darkToggle" onclick="toggleDark()">🌙</button>
     </div>
   </nav>
 
@@ -37,168 +37,86 @@
 </div>
 
 <script>
-  // Dark mode
-  (function() {
-    var darkToggle = document.getElementById('darkToggle');
-    if (localStorage.getItem('dark') === 'true') {
-      document.body.classList.add('dark');
-      if (darkToggle) darkToggle.textContent = '☀️';
-    }
-    if (darkToggle) {
-      darkToggle.onclick = function() {
-        document.body.classList.toggle('dark');
-        var isDark = document.body.classList.contains('dark');
-        this.textContent = isDark ? '☀️' : '🌙';
-        localStorage.setItem('dark', isDark);
-      };
-    }
-  })();
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+    const btn = document.getElementById('darkToggle');
+    btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    localStorage.setItem('dark', document.body.classList.contains('dark'));
+  }
+  if (localStorage.getItem('dark') === 'true') {
+    document.body.classList.add('dark');
+    document.getElementById('darkToggle').textContent = '☀️';
+  }
 
-  // Particles
-  (function() {
-    var container = document.getElementById('particles');
-    if (container) {
-      for (var i = 0; i < 18; i++) {
-        var p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = Math.random() * 100 + 'vw';
-        p.style.animationDelay = Math.random() * 8 + 's';
-        p.style.animationDuration = (6 + Math.random() * 8) + 's';
-        p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
-        p.style.opacity = 0.15 + Math.random() * 0.25;
-        container.appendChild(p);
-      }
-    }
-  })();
+  const particleContainer = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (6 + Math.random() * 8) + 's';
+    p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
+    p.style.opacity = 0.15 + Math.random() * 0.25;
+    particleContainer.appendChild(p);
+  }
 </script>
 
 <script type="module">
   import { getUser, getSessions } from './auth.js';
 
-  (async function() {
-    const container = document.getElementById('historyContainer');
-    container.innerHTML = '<div class="card" style="text-align:center;padding:40px;"><p style="font-weight:700;color:var(--text-muted);">Loading your history...</p></div>';
+  const historyContainer = document.getElementById('historyContainer');
+  historyContainer.innerHTML = '<div class="card" style="text-align:center;padding:40px;"><p style="font-weight:700;color:var(--text-muted);">⏳ Loading your history...</p></div>';
 
-    try {
-      const user = await getUser();
+  try {
+    const user = await getUser();
 
-      if (!user) {
-        container.innerHTML = '<div class="card" style="text-align:center;padding:60px 20px;"><div style="font-size:3rem;margin-bottom:16px;">🔐</div><p style="font-size:1rem;font-weight:600;color:var(--text-muted);margin-bottom:20px;">Login to see your practice history</p><a href="index.html"><button class="btn-primary">Go to Home</button></a></div>';
-        return;
-      }
-
+    if (!user) {
+      historyContainer.innerHTML = `
+        <div class="card" style="text-align:center;padding:60px 20px;">
+          <div style="font-size:3rem;margin-bottom:16px;">🔐</div>
+          <p style="font-size:1rem;font-weight:600;color:var(--text-muted);margin-bottom:20px;">Login to see your practice history</p>
+        </div>`;
+    } else {
       const sessions = await getSessions();
 
       if (!sessions || sessions.length === 0) {
-        container.innerHTML = '<div class="card" style="text-align:center;padding:60px 20px;"><div style="font-size:3rem;margin-bottom:16px;">🎙️</div><p style="font-size:1rem;font-weight:600;color:var(--text-muted);margin-bottom:20px;">No practice sessions yet! Go record your first speech.</p><a href="exercise.html"><button class="btn-primary">Start Practicing</button></a></div>';
-        return;
-      }
-
-      container.innerHTML = '';
-
-      for (var i = 0; i < sessions.length; i++) {
-        var s = sessions[i];
-        var date = new Date(s.created_at).toLocaleDateString('en-IN', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
+        historyContainer.innerHTML = `
+          <div class="card" style="text-align:center;padding:60px 20px;">
+            <div style="font-size:3rem;margin-bottom:16px;">🎙️</div>
+            <p style="font-size:1rem;font-weight:600;color:var(--text-muted);margin-bottom:20px;">No practice sessions yet!</p>
+            <a href="exercise.html"><button class="btn-primary">Start Practicing</button></a>
+          </div>`;
+      } else {
+        historyContainer.innerHTML = '';
+        sessions.forEach(s => {
+          const date = new Date(s.created_at).toLocaleDateString('en-IN', {
+            day: 'numeric', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+          });
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.style.marginTop = '16px';
+          card.innerHTML = `
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+              <span style="background:rgba(255,75,110,0.08);padding:4px 12px;border-radius:99px;font-size:0.75rem;font-weight:700;color:var(--primary);">📅 ${date}</span>
+              <span style="background:rgba(255,75,110,0.08);padding:4px 12px;border-radius:99px;font-size:0.75rem;font-weight:700;color:var(--primary);">⏱ ${s.duration || '00:00'}</span>
+              <span style="background:rgba(255,75,110,0.08);padding:4px 12px;border-radius:99px;font-size:0.75rem;font-weight:700;color:var(--primary);">⚠️ ${s.filler_count || 0} fillers</span>
+            </div>
+            <div style="font-size:0.75rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">📝 Your Speech</div>
+            <div style="font-size:0.92rem;color:var(--text-muted);line-height:1.7;white-space:pre-wrap;margin-bottom:14px;">${s.transcript || 'No transcript'}</div>
+            <div style="font-size:0.75rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">🧠 AI Feedback</div>
+            <div style="font-size:0.92rem;color:var(--text-muted);line-height:1.7;white-space:pre-wrap;">${s.feedback || 'No feedback'}</div>
+          `;
+          historyContainer.appendChild(card);
         });
-        
-        var card = document.createElement('div');
-        card.className = 'card';
-        card.style.marginTop = '16px';
-        card.style.padding = '20px';
-        card.style.background = 'var(--card-bg)';
-        card.style.border = '1.5px solid var(--border)';
-        card.style.borderRadius = '18px';
-        
-        var meta = document.createElement('div');
-        meta.style.display = 'flex';
-        meta.style.gap = '12px';
-        meta.style.flexWrap = 'wrap';
-        meta.style.marginBottom = '14px';
-        
-        var dateTag = document.createElement('span');
-        dateTag.style.background = 'rgba(255,75,110,0.08)';
-        dateTag.style.padding = '4px 12px';
-        dateTag.style.borderRadius = '99px';
-        dateTag.style.fontSize = '0.75rem';
-        dateTag.style.fontWeight = '700';
-        dateTag.style.color = 'var(--primary)';
-        dateTag.textContent = '📅 ' + date;
-        
-        var durationTag = document.createElement('span');
-        durationTag.style.background = 'rgba(255,75,110,0.08)';
-        durationTag.style.padding = '4px 12px';
-        durationTag.style.borderRadius = '99px';
-        durationTag.style.fontSize = '0.75rem';
-        durationTag.style.fontWeight = '700';
-        durationTag.style.color = 'var(--primary)';
-        durationTag.textContent = '⏱ ' + (s.duration || '00:00');
-        
-        var fillerTag = document.createElement('span');
-        fillerTag.style.background = 'rgba(255,75,110,0.08)';
-        fillerTag.style.padding = '4px 12px';
-        fillerTag.style.borderRadius = '99px';
-        fillerTag.style.fontSize = '0.75rem';
-        fillerTag.style.fontWeight = '700';
-        fillerTag.style.color = 'var(--primary)';
-        fillerTag.textContent = '⚠️ ' + (s.filler_count || 0) + ' fillers';
-        
-        meta.appendChild(dateTag);
-        meta.appendChild(durationTag);
-        meta.appendChild(fillerTag);
-        
-        var speechLabel = document.createElement('div');
-        speechLabel.style.fontSize = '0.75rem';
-        speechLabel.style.fontWeight = '800';
-        speechLabel.style.color = 'var(--primary)';
-        speechLabel.style.textTransform = 'uppercase';
-        speechLabel.style.letterSpacing = '1px';
-        speechLabel.style.marginBottom = '6px';
-        speechLabel.textContent = '📝 Your Speech';
-        
-        var speechText = document.createElement('div');
-        speechText.style.fontSize = '0.92rem';
-        speechText.style.color = 'var(--text-muted)';
-        speechText.style.lineHeight = '1.7';
-        speechText.style.whiteSpace = 'pre-wrap';
-        speechText.style.marginBottom = '14px';
-        speechText.textContent = s.transcript || 'No transcript';
-        
-        var feedbackLabel = document.createElement('div');
-        feedbackLabel.style.fontSize = '0.75rem';
-        feedbackLabel.style.fontWeight = '800';
-        feedbackLabel.style.color = 'var(--primary)';
-        feedbackLabel.style.textTransform = 'uppercase';
-        feedbackLabel.style.letterSpacing = '1px';
-        feedbackLabel.style.marginBottom = '6px';
-        feedbackLabel.textContent = '🧠 AI Feedback';
-        
-        var feedbackText = document.createElement('div');
-        feedbackText.style.fontSize = '0.92rem';
-        feedbackText.style.color = 'var(--text-muted)';
-        feedbackText.style.lineHeight = '1.7';
-        feedbackText.style.whiteSpace = 'pre-wrap';
-        feedbackText.textContent = s.feedback || 'No feedback';
-        
-        card.appendChild(meta);
-        card.appendChild(speechLabel);
-        card.appendChild(speechText);
-        card.appendChild(feedbackLabel);
-        card.appendChild(feedbackText);
-        
-        container.appendChild(card);
       }
-
-    } catch(err) {
-      console.error('Error loading history:', err);
-      container.innerHTML = '<div class="card" style="text-align:center;padding:40px;"><p style="color:#ef4444;font-weight:700;">⚠️ Error loading history. Please refresh.</p></div>';
     }
-  })();
+  } catch(err) {
+    console.error('History error:', err);
+    historyContainer.innerHTML = '<div class="card" style="text-align:center;padding:40px;"><p style="color:#ef4444;font-weight:700;">⚠️ Error loading history. Please refresh.</p></div>';
+  }
 </script>
+
 <script type="module" src="login-widget.js"></script>
 </body>
 </html>

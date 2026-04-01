@@ -1,215 +1,135 @@
-import { supabase, getUser } from './auth.js'
+import { saveSession, updateNav } from './auth.js'
 
-let mediaRecorder;
-let audioChunks = [];
-let isRecording = false;
-let timerInterval;
+const transcriptDiv = document.getElementById("transcript");
+const feedbackDiv = document.getElementById("feedback");
+
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.continuous = true;
+
+let finalText = "";
+let timerInterval = null;
 let seconds = 0;
+let fillerCount = 0;
 
-// DOM elements
-const startBtn = document.getElementById('startBtn');
-const stopBtn = document.getElementById('stopBtn');
-const timerDisplay = document.getElementById('timerDisplay');
-const recordStatus = document.getElementById('recordStatus');
-const transcriptDiv = document.getElementById('transcript');
-const feedbackDiv = document.getElementById('feedback');
-const fillerResult = document.getElementById('fillerResult');
+const BACKEND_URL = "https://speech-ai-website-1.onrender.com";
 
-// Start recording
-startBtn.addEventListener('click', async () => {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks = [];
-
-    mediaRecorder.ondataavailable = (event) => {
-      audioChunks.push(event.data);
-    };
-
-    mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      await processAudio(audioBlob);
-      stream.getTracks().forEach(track => track.stop());
-    };
-
-    mediaRecorder.start();
-    isRecording = true;
-    startTimer();
-    
-    startBtn.style.display = 'none';
-    stopBtn.style.display = 'inline-flex';
-    recordStatus.textContent = '🔴 Recording...';
-    recordStatus.style.color = '#ef4444';
-    
-  } catch (error) {
-    console.error('Error accessing microphone:', error);
-    recordStatus.textContent = '❌ Microphone access denied';
-    alert('Please allow microphone access to record your speech.');
-  }
+window.addEventListener("beforeunload", () => window.speechSynthesis.cancel());
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) window.speechSynthesis.cancel();
 });
 
-// Stop recording
-stopBtn.addEventListener('click', () => {
-  if (mediaRecorder && isRecording) {
-    mediaRecorder.stop();
-    isRecording = false;
-    stopTimer();
-    
-    stopBtn.style.display = 'none';
-    startBtn.style.display = 'inline-flex';
-    recordStatus.textContent = '⏳ Analyzing...';
-    recordStatus.style.color = '#f59e0b';
+recognition.onresult = function(event) {
+  finalText = "";
+  for (let i = 0; i < event.results.length; i++) {
+    finalText += event.results[i][0].transcript;
   }
-});
+  transcriptDiv.innerText = finalText;
+};
 
-// Timer functions
-function startTimer() {
+document.getElementById("startBtn").onclick = () => {
+  finalText = "";
+  transcriptDiv.innerText = "";
+  feedbackDiv.innerText = "";
+  document.getElementById("fillerResult").style.display = "none";
   seconds = 0;
-  timerInterval = setInterval(() => {
-    seconds++;
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    timerDisplay.textContent = `⏱ ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  }, 1000);
-}
+  fillerCount = 0;
+  updateTimer();
+  timerInterval = setInterval(() => { seconds++; updateTimer(); }, 1000);
+  recognition.start();
+};
 
-function stopTimer() {
+document.getElementById("stopBtn").onclick = () => {
+  recognition.stop();
   clearInterval(timerInterval);
+  fillerCount = showFillerCount(finalText);
+  getAIFeedback(finalText);
+};
+
+function updateTimer() {
+  const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const s = String(seconds % 60).padStart(2, '0');
+  document.getElementById("timerDisplay").innerText = `⏱ ${m}:${s}`;
 }
 
-// Process audio with AI
-async function processAudio(audioBlob) {
-  try {
-    // Get current user
-    const user = await getUser();
-    if (!user) {
-      alert('Please login to save your practice sessions');
-      return;
+function showFillerCount(text) {
+  const fillers = ["um", "uh", "like", "you know", "basically", "literally", "actually", "so", "right"];
+  const lower = text.toLowerCase();
+  let total = 0;
+  let breakdown = [];
+  fillers.forEach(f => {
+    const regex = new RegExp(`\\b${f}\\b`, 'gi');
+    const matches = lower.match(regex);
+    if (matches && matches.length > 0) {
+      total += matches.length;
+      breakdown.push(`"${f}" × ${matches.length}`);
     }
-
-    // Convert audio to text (using Web Speech API for demo)
-    const transcript = await convertAudioToText(audioBlob);
-    transcriptDiv.textContent = transcript || 'No speech detected';
-
-    // Analyze for filler words
-    const fillerWords = ['um', 'uh', 'like', 'you know', 'actually', 'basically', 'so'];
-    const words = transcript.toLowerCase().split(/\s+/);
-    let fillerCount = 0;
-    const detectedFillers = [];
-    
-    words.forEach(word => {
-      if (fillerWords.includes(word)) {
-        fillerCount++;
-        detectedFillers.push(word);
-      }
-    });
-
-    // Generate AI feedback
-    let feedback = '';
-    if (fillerCount > 10) {
-      feedback = `⚠️ You used ${fillerCount} filler words (${detectedFillers.slice(0, 5).join(', ')}...). Try to pause instead of using fillers. Practice speaking slowly and deliberately.`;
-    } else if (fillerCount > 5) {
-      feedback = `📊 You used ${fillerCount} filler words. Focus on reducing "um" and "uh" by taking deep breaths and pausing.`;
-    } else if (fillerCount > 0) {
-      feedback = `🎯 Great job! Only ${fillerCount} filler words detected. Your speech is clear and confident!`;
-    } else {
-      feedback = `🌟 Excellent! No filler words detected. You speak very clearly and confidently!`;
-    }
-
-    // Add duration feedback
-    const duration = seconds;
-    if (duration < 30) {
-      feedback += ` Try to speak for at least 1 minute to get better feedback.`;
-    } else if (duration > 180) {
-      feedback += ` Great length! You spoke for ${Math.floor(duration/60)} minutes.`;
-    }
-
-    feedbackDiv.textContent = feedback;
-
-    // Show filler words
-    if (fillerCount > 0) {
-      fillerResult.style.display = 'block';
-      fillerResult.innerHTML = `⚠️ Detected filler words: ${detectedFillers.join(', ')} (${fillerCount} total)`;
-      fillerResult.style.background = 'rgba(239,68,68,0.1)';
-      fillerResult.style.borderColor = '#ef4444';
-      fillerResult.style.color = '#dc2626';
-    } else {
-      fillerResult.style.display = 'block';
-      fillerResult.innerHTML = '✅ No filler words detected! Great job!';
-      fillerResult.style.background = 'rgba(34,197,94,0.1)';
-      fillerResult.style.borderColor = '#22c55e';
-      fillerResult.style.color = '#16a34a';
-    }
-
-    // Save to database
-    await saveSession(user.id, transcript, feedback, fillerCount, duration);
-    
-    recordStatus.textContent = '✅ Analysis complete!';
-    setTimeout(() => {
-      recordStatus.textContent = 'Ready to record';
-      recordStatus.style.color = 'var(--text-muted)';
-    }, 2000);
-
-  } catch (error) {
-    console.error('Error processing audio:', error);
-    recordStatus.textContent = '❌ Error analyzing speech';
-    feedbackDiv.textContent = 'Error processing your speech. Please try again.';
-  }
-}
-
-// Convert audio to text using Web Speech API
-function convertAudioToText(audioBlob) {
-  return new Promise((resolve) => {
-    // For demo purposes, return a sample transcript
-    // In production, you would use a speech-to-text API
-    const sampleTranscripts = [
-      "Hello everyone, today I want to talk about the importance of public speaking. It's a skill that can change your life.",
-      "Public speaking is an essential skill in today's world. Whether you're in business or education, being able to speak confidently matters.",
-      "I believe that everyone can become a great speaker with practice. The key is to start small and build confidence over time.",
-      "When I first started speaking publicly, I was nervous. But with practice, I learned to control my nerves and speak with confidence.",
-      "The most important thing is to know your audience and speak from the heart. Authenticity resonates with people."
-    ];
-    
-    setTimeout(() => {
-      resolve(sampleTranscripts[Math.floor(Math.random() * sampleTranscripts.length)]);
-    }, 2000);
   });
+  const box = document.getElementById("fillerResult");
+  box.style.display = "block";
+  if (total === 0) {
+    box.innerHTML = `✅ <strong>No filler words detected!</strong> Great job!`;
+    box.style.background = "rgba(34,197,94,0.1)";
+    box.style.borderColor = "#22c55e";
+    box.style.color = "#15803d";
+  } else {
+    box.innerHTML = `⚠️ <strong>${total} filler word(s) detected:</strong> ${breakdown.join(", ")}`;
+    box.style.background = "rgba(239,68,68,0.08)";
+    box.style.borderColor = "#ef4444";
+    box.style.color = "#dc2626";
+  }
+  return total;
 }
 
-// Save session to Supabase
-async function saveSession(userId, transcript, feedback, fillerCount, duration) {
-  try {
-    const { data, error } = await supabase
-      .from('sessions')
-      .insert([
-        {
-          user_id: userId,
-          transcript: transcript,
-          feedback: feedback,
-          filler_count: fillerCount,
-          duration: formatDuration(duration),
-          created_at: new Date().toISOString()
-        }
-      ]);
+function speakFeedback(text) {
+  const speech = new SpeechSynthesisUtterance(text);
+  speech.lang = "en-IN";
+  speech.pitch = 1.1;
+  speech.rate = 0.95;
+  speech.volume = 1;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(speech);
+}
 
-    if (error) {
-      console.error('Error saving session:', error);
-    } else {
-      console.log('Session saved successfully!');
-    }
+async function getAIFeedback(text) {
+  if (!text || text.trim() === "") {
+    feedbackDiv.innerText = "No speech detected.";
+    return;
+  }
+  feedbackDiv.innerText = "Analyzing with AI...";
+  try {
+    const response = await fetch(`${BACKEND_URL}/ai`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text })
+    });
+    const data = await response.json();
+    feedbackDiv.innerText = data.reply;
+    speakFeedback(data.reply);
+
+    const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const s = String(seconds % 60).padStart(2, '0');
+    await saveSession(text, data.reply, `${m}:${s}`, fillerCount);
+
   } catch (error) {
-    console.error('Error:', error);
+    feedbackDiv.innerText = "Backend not reachable. Is the server running?";
+    console.error(error);
   }
 }
 
-// Format duration
-function formatDuration(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+// Dark mode
+window.toggleDark = function() {
+  document.body.classList.toggle('dark');
+  const btn = document.getElementById('darkToggle');
+  btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  localStorage.setItem('dark', document.body.classList.contains('dark'));
+}
+if (localStorage.getItem('dark') === 'true') {
+  document.body.classList.add('dark');
+  const btn = document.getElementById('darkToggle');
+  if (btn) btn.textContent = '☀️';
 }
 
-// Load random topic on page load
+// Topic prompts
 const topics = [
   "Describe your biggest achievement in 2 minutes.",
   "Talk about a person who inspired you the most.",
@@ -220,15 +140,31 @@ const topics = [
   "Describe a place you would love to visit and why.",
   "What does success mean to you?",
   "Talk about a book or movie that changed your perspective.",
-  "Why is public speaking important in daily life?"
+  "Why is public speaking important in daily life?",
+  "Describe your perfect day from morning to night.",
+  "What advice would you give your younger self?",
+  "Talk about a hobby you are passionate about.",
+  "What is the biggest problem in the world today?",
+  "Describe a time you had to make a difficult decision."
 ];
 
 window.newTopic = function() {
-  const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-  document.getElementById('topicText').textContent = randomTopic;
-};
+  const t = topics[Math.floor(Math.random() * topics.length)];
+  document.getElementById('topicText').textContent = t;
+}
+if (document.getElementById('topicText')) window.newTopic();
 
-// Initialize topic on page load
-if (document.getElementById('topicText')) {
-  window.newTopic();
+// Particles
+const container = document.getElementById('particles');
+if (container) {
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (6 + Math.random() * 8) + 's';
+    p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
+    p.style.opacity = 0.15 + Math.random() * 0.25;
+    container.appendChild(p);
+  }
 }
