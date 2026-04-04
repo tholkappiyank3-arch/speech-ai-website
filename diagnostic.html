@@ -143,18 +143,36 @@ async function startQuiz() {
   document.getElementById('resultCard').style.display = 'none';
   document.getElementById('quizCard').style.display = 'none';
   document.getElementById('loadingCard').style.display = 'block';
-  document.getElementById('loadingCard').innerHTML = '<div class="spinner"></div><p>AI is generating your 25 questions...</p>';
+  document.getElementById('loadingCard').innerHTML = `
+    <div class="spinner"></div>
+    <p>AI is generating your questions...</p>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">This may take up to 30 seconds if the server just woke up ☕</p>
+  `;
+
   try {
     const response = await fetch("https://speech-ai-website-1.onrender.com/generate-questions", {
-      method: "POST", headers: { "Content-Type": "application/json" }
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
     });
+
     const data = await response.json();
+
+    if (data.error || !data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
+      throw new Error(data.error || "Empty questions");
+    }
+
     questions = data.questions;
     document.getElementById('loadingCard').style.display = 'none';
     document.getElementById('quizCard').style.display = 'block';
     loadQuestion();
+
   } catch (err) {
-    document.getElementById('loadingCard').innerHTML = '<p style="color:#ef4444;font-weight:700;">⚠️ Failed to generate questions. Please refresh.</p>';
+    console.error("Quiz error:", err);
+    document.getElementById('loadingCard').innerHTML = `
+      <p style="color:#ef4444;font-weight:700;margin-bottom:16px;">⚠️ Failed to load questions.</p>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;">The server may be waking up. Please try again!</p>
+      <button class="btn-primary" onclick="startQuiz()" style="margin:0 auto;">🔄 Try Again</button>
+    `;
   }
 }
 

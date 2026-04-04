@@ -55,24 +55,60 @@ app.post("/generate-questions", async (req, res) => {
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_KEY}` },
       body: JSON.stringify({
         model: "llama-3.1-8b-instant",
-        messages: [{
-          role: "user",
-          content: `Generate exactly 25 multiple choice questions to test advanced English and public speaking skills.
-Include exactly:
-- 5 Comprehension questions (based on a short paragraph or context, testing understanding)
-- 10 Grammar questions (advanced grammar: subjunctive, passive voice, conditionals, tenses, articles)
-- 5 Pronunciation questions (silent letters, syllable stress, homophones, phonetics)
-- 5 Vocabulary questions (advanced vocabulary, idioms, formal vs informal usage, word meaning in context)
-
-Difficulty: above intermediate, close to advanced level. Avoid simple or obvious questions.
-
-Return ONLY a valid JSON array, no extra text, no markdown, no backticks, in this format:
+        messages: [
+          {
+            role: "system",
+            content: "You are a JSON generator. Output ONLY a valid JSON array. No explanation, no markdown, no backticks, no extra text whatsoever. Just the raw JSON array starting with [ and ending with ]."
+          },
+          {
+            role: "user",
+            content: `Generate exactly 25 multiple choice questions for English and public speaking skills.
+Include: 5 Comprehension, 10 Grammar, 5 Pronunciation, 5 Vocabulary questions.
+Difficulty: above intermediate level.
+Format - output ONLY this JSON array, nothing else:
 [{"category":"Grammar","question":"...","options":["a","b","c","d"],"answer":0}]
-The answer field is the index 0-3 of the correct option. Make questions completely different each time.`
-        }],
-        temperature: 0.9
+answer is index 0-3 of correct option.`
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 4000
       })
     });
+
+    const data = await r.json();
+
+    if (!data.choices || !data.choices[0]) {
+      console.error("No choices:", JSON.stringify(data));
+      return res.json({ error: "AI did not respond" });
+    }
+
+    const text = data.choices[0].message.content.trim();
+    console.log("AI response preview:", text.substring(0, 100));
+
+    // Extract JSON array robustly
+    const start = text.indexOf('[');
+    const end = text.lastIndexOf(']');
+
+    if (start === -1 || end === -1) {
+      console.error("No JSON array found in:", text.substring(0, 200));
+      return res.json({ error: "Could not find JSON array" });
+    }
+
+    const jsonStr = text.substring(start, end + 1);
+    const questions = JSON.parse(jsonStr);
+
+    if (!Array.isArray(questions) || questions.length === 0) {
+      return res.json({ error: "Empty questions array" });
+    }
+
+    console.log(`Generated ${questions.length} questions successfully`);
+    res.json({ questions });
+
+  } catch (err) {
+    console.error("Generate questions error:", err);
+    res.json({ error: "Failed to generate questions" });
+  }
+});
     const data = await r.json();
     const text = data.choices[0].message.content;
     const clean = text.replace(/```json|```/g, '').trim();
