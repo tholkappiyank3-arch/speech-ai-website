@@ -43,6 +43,7 @@
     .score-label { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.8); }
     .result-msg { font-size: 1rem; color: var(--text-muted); line-height: 1.7; max-width: 420px; margin: 0 auto 28px; }
     .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+    .sync-badge { font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 8px; }
     body.dark .option { background: rgba(22,22,31,0.8); color: #f0f0ff; border-color: rgba(124,131,255,0.2); }
     body.dark .option:hover { background: rgba(124,131,255,0.1); }
     body.dark .option.correct { background: rgba(34,197,94,0.15); color: #4ade80; }
@@ -83,10 +84,11 @@
 
   <div class="card">
     <div class="streak-info">
-      <div class="streak-count" id="streakCount">🔥 0 Day Streak</div>
-      <div class="streak-sub" id="streakSub">Complete today's lesson to start your streak!</div>
+      <div class="streak-count" id="streakCount">🔥 Loading...</div>
+      <div class="streak-sub" id="streakSub">Syncing your streak...</div>
     </div>
     <div class="streak-bar" id="streakBar"></div>
+    <div class="sync-badge" id="syncBadge"></div>
   </div>
 
   <div class="frozen-msg" id="frozenMsg" style="display:none;margin-top:20px;">
@@ -150,124 +152,22 @@
     particleContainer.appendChild(p);
   }
 
-const dayContent = {
-  1: {
-    tip: "💡 Day 1 Tip: Tone is the emotion behind your words. A rising tone shows curiosity, a falling tone shows confidence.",
-    questions: [
-      { category: "Tone & Pronunciation", q: "Which sentence uses a confident falling tone?", options: ["Is this correct?", "This is correct.", "Maybe this is correct?", "Could this be correct?"], answer: 1, explanation: "Statements with a falling tone at the end sound confident and assertive." },
-      { category: "Tone & Pronunciation", q: "The word 'present' as a noun is stressed on which syllable?", options: ["pre-SENT", "PRE-sent", "Both equal", "Neither"], answer: 1, explanation: "As a noun, 'PRE-sent' (gift). As a verb, 'pre-SENT' (to give)." },
-      { category: "Speech Clarity", q: "What is the best way to improve speech clarity?", options: ["Speak faster", "Swallow word endings", "Pause between key points", "Use more filler words"], answer: 2, explanation: "Pausing gives listeners time to absorb your message." },
-      { category: "Tone & Pronunciation", q: "Which word has a silent letter?", options: ["cat", "knife", "run", "map"], answer: 1, explanation: "In 'knife', the 'k' is silent." },
-      { category: "Speech Clarity", q: "Which habit hurts speech clarity the most?", options: ["Pausing", "Eye contact", "Mumbling", "Breathing"], answer: 2, explanation: "Mumbling makes words unclear and hard to follow." },
-      { category: "Tone & Pronunciation", q: "How many syllables does 'comfortable' have in natural speech?", options: ["4", "3", "2", "5"], answer: 1, explanation: "'Comfortable' is typically pronounced as 3 syllables: COMF-ter-ble." },
-      { category: "Tone & Pronunciation", q: "A speaker who uses a monotone voice sounds:", options: ["Confident", "Energetic", "Boring", "Friendly"], answer: 2, explanation: "Monotone means no variation in pitch — it makes listeners disengage quickly." },
-      { category: "Speech Clarity", q: "What does 'articulation' mean in speech?", options: ["Speaking loudly", "Forming words clearly with mouth and tongue", "Using big words", "Breathing deeply"], answer: 1, explanation: "Articulation is the physical process of making clear, distinct sounds." },
-      { category: "Tone & Pronunciation", q: "Which is the correct pronunciation of 'Wednesday'?", options: ["Wed-nes-day", "Wenz-day", "Wed-en-day", "Weed-day"], answer: 1, explanation: "Wednesday is pronounced 'WENZ-day'." },
-      { category: "Speech Clarity", q: "Why should speakers avoid filler words like 'um' and 'uh'?", options: ["They add personality", "They show confidence", "They distract listeners", "They improve pacing"], answer: 2, explanation: "Filler words break the flow and make the speaker seem unprepared." }
-    ]
-  },
-  2: {
-    tip: "💡 Day 2 Tip: Pitch variation keeps your audience engaged. Practice going from high to low pitch within a sentence.",
-    questions: [
-      { category: "Tone & Pronunciation", q: "What is 'pitch' in speech?", options: ["How loud you speak", "How high or low your voice sounds", "How fast you speak", "How clear your words are"], answer: 1, explanation: "Pitch refers to the highness or lowness of your voice." },
-      { category: "Tone & Pronunciation", q: "Which word pair are homophones?", options: ["there / their", "cat / bat", "run / fun", "big / bag"], answer: 0, explanation: "'there' and 'their' sound identical but have different meanings." },
-      { category: "Speech Clarity", q: "What is the ideal speaking rate for public speaking?", options: ["50-80 words per minute", "130-160 words per minute", "200+ words per minute", "300 words per minute"], answer: 1, explanation: "130-160 wpm is the ideal conversational rate." },
-      { category: "Tone & Pronunciation", q: "In the word 'photograph', which syllable is stressed?", options: ["pho-TO-graph", "PHO-to-graph", "pho-to-GRAPH", "All equal"], answer: 1, explanation: "PHO-to-graph — the stress falls on the first syllable." },
-      { category: "Speech Clarity", q: "Eye contact during a speech helps to:", options: ["Confuse the audience", "Build connection and trust", "Show nervousness", "Speed up delivery"], answer: 1, explanation: "Eye contact creates a personal connection with listeners." },
-      { category: "Tone & Pronunciation", q: "The 'th' sound in 'think' is:", options: ["Voiced", "Unvoiced", "Silent", "Nasal"], answer: 1, explanation: "The 'th' in 'think' is unvoiced — air passes through but the vocal cords don't vibrate." },
-      { category: "Speech Clarity", q: "Which technique helps control nervousness before speaking?", options: ["Speaking faster", "Deep breathing", "Avoiding the audience", "Using more filler words"], answer: 1, explanation: "Deep breathing activates the parasympathetic nervous system, reducing anxiety." },
-      { category: "Tone & Pronunciation", q: "What does 'intonation' mean?", options: ["Volume of speech", "Rise and fall of pitch in speech", "Speed of speech", "Clarity of words"], answer: 1, explanation: "Intonation is the pattern of pitch changes across sentences." },
-      { category: "Speech Clarity", q: "A speaker should pause:", options: ["Never, it shows weakness", "Only at the end", "Before and after key points", "Every 5 seconds"], answer: 2, explanation: "Strategic pauses give emphasis and allow the audience to absorb information." },
-      { category: "Tone & Pronunciation", q: "Which word is commonly mispronounced as 'ex-presso'?", options: ["Express", "Espresso", "Expresso", "Impress"], answer: 1, explanation: "The correct word is 'espresso' — there is no 'x' in it." }
-    ]
-  },
-  3: {
-    tip: "💡 Day 3 Tip: Volume control is power. Lowering your voice at key moments draws the audience in.",
-    questions: [
-      { category: "Speech Clarity", q: "What is 'projection' in public speaking?", options: ["Using a microphone", "Throwing your voice to reach the back of the room", "Showing slides", "Making eye contact"], answer: 1, explanation: "Projection means controlling volume so your voice carries clearly to all listeners." },
-      { category: "Tone & Pronunciation", q: "Which sentence has correct word stress?", options: ["I didn't say HE stole it", "I DIDN'T say he stole it", "I didn't SAY he stole it", "All of the above change meaning"], answer: 3, explanation: "Stressing different words changes the meaning entirely — this is called contrastive stress." },
-      { category: "Tone & Pronunciation", q: "The word 'colonel' is pronounced as:", options: ["col-o-nel", "ker-nel", "col-nel", "co-lo-nel"], answer: 1, explanation: "'Colonel' is pronounced 'KER-nel'." },
-      { category: "Speech Clarity", q: "What is 'chunking' in speech delivery?", options: ["Breaking speech into fast segments", "Grouping words into meaningful phrases with pauses", "Using bullet points", "Repeating key words"], answer: 1, explanation: "Chunking groups related words together, making speech easier to follow." },
-      { category: "Tone & Pronunciation", q: "A rising intonation at the end of a sentence usually indicates:", options: ["A statement", "A command", "A question or uncertainty", "Anger"], answer: 2, explanation: "Rising intonation signals a question or uncertainty." },
-      { category: "Speech Clarity", q: "Which is the best opening for a speech?", options: ["'Um, so today I will talk about...'", "'Good morning. Did you know that 75% of people fear public speaking?'", "'I'm not very good at this but...'", "'So basically what I want to say is...'"], answer: 1, explanation: "A strong opening with a surprising fact immediately grabs audience attention." },
-      { category: "Tone & Pronunciation", q: "How is the 'g' pronounced in 'gnome'?", options: ["Hard g sound", "Soft j sound", "Silent", "Like 'n'"], answer: 2, explanation: "In 'gnome', the 'g' is silent. It is pronounced 'nome'." },
-      { category: "Tone & Pronunciation", q: "Which word has the stress on the second syllable?", options: ["ALpha", "beGIN", "TAble", "OPen"], answer: 1, explanation: "'beGIN' has stress on the second syllable." },
-      { category: "Speech Clarity", q: "What is the purpose of a 'power pause'?", options: ["To forget your speech", "To create dramatic emphasis and let ideas sink in", "To drink water", "To check your notes"], answer: 1, explanation: "A power pause after a key point gives it weight and lets the audience absorb it." },
-      { category: "Tone & Pronunciation", q: "Which of these is an example of 'liaison' in speech?", options: ["Saying each word separately", "Linking the end of one word to the start of the next", "Speaking louder", "Pausing between each word"], answer: 1, explanation: "Liaison connects words smoothly in natural speech." }
-    ]
-  },
-  4: {
-    tip: "💡 Day 4 Tip: Resonance gives your voice warmth and depth. Speak from your chest, not your throat.",
-    questions: [
-      { category: "Tone & Pronunciation", q: "What is 'resonance' in voice production?", options: ["How fast you speak", "The vibration and amplification of sound in your body", "How clearly you pronounce words", "The pitch of your voice"], answer: 1, explanation: "Resonance is the amplification of sound using body cavities." },
-      { category: "Speech Clarity", q: "Which transition word best shows contrast?", options: ["Furthermore", "However", "Therefore", "Similarly"], answer: 1, explanation: "'However' signals a contrast or opposing idea." },
-      { category: "Tone & Pronunciation", q: "The word 'mischievous' has how many syllables?", options: ["4 (mis-chie-vi-ous)", "3 (mis-che-vous)", "2 (mis-chvous)", "5"], answer: 1, explanation: "'Mischievous' has 3 syllables: MIS-che-vous." },
-      { category: "Speech Clarity", q: "What does 'pacing' mean in speech delivery?", options: ["Walking while speaking", "The speed and rhythm of your speech", "Using hand gestures", "Making eye contact"], answer: 1, explanation: "Pacing is the variation of speed in your speech." },
-      { category: "Tone & Pronunciation", q: "Which word contains a schwa sound (ə)?", options: ["cat", "about", "hit", "met"], answer: 1, explanation: "The first 'a' in 'about' is a schwa — the most common vowel sound in English." },
-      { category: "Tone & Pronunciation", q: "What is 'assimilation' in pronunciation?", options: ["Learning new words", "When sounds change due to neighboring sounds", "Stressing syllables", "Speaking louder"], answer: 1, explanation: "Assimilation is when sounds blend together in natural speech." },
-      { category: "Speech Clarity", q: "A speech without structure is like:", options: ["A song without music", "A book without pages", "A map without a destination", "All of the above"], answer: 3, explanation: "Structure gives your speech direction." },
-      { category: "Tone & Pronunciation", q: "The 'p' in 'pneumonia' is:", options: ["Pronounced normally", "Silent", "Aspirated", "Nasal"], answer: 1, explanation: "In 'pneumonia', the 'p' is silent. It is pronounced 'new-MO-nia'." },
-      { category: "Speech Clarity", q: "Why is a conversational tone preferred in speeches?", options: ["It sounds rehearsed", "It feels natural and relatable to the audience", "It removes all emotion", "It requires no preparation"], answer: 1, explanation: "A conversational tone makes the audience feel you are speaking WITH them." },
-      { category: "Tone & Pronunciation", q: "Which sentence demonstrates correct emphasis?", options: ["I LOVE eating pizza", "I love EATING pizza", "I love eating PIZZA", "All change the meaning"], answer: 3, explanation: "Stressing different words shifts the focus of meaning." }
-    ]
-  },
-  5: {
-    tip: "💡 Day 5 Tip: The rule of three is powerful in speech — group ideas in threes for maximum impact.",
-    questions: [
-      { category: "Speech Clarity", q: "What is the 'rule of three' in speechmaking?", options: ["Speak for exactly 3 minutes", "Group ideas in sets of three for impact", "Use three pauses per sentence", "Have three main slides"], answer: 1, explanation: "The rule of three creates rhythm and memorability." },
-      { category: "Tone & Pronunciation", q: "The word 'debris' is pronounced:", options: ["deb-ris", "deh-bree", "de-BRIS", "DEB-ree"], answer: 1, explanation: "'Debris' is pronounced 'deh-BREE' — the 's' is silent." },
-      { category: "Tone & Pronunciation", q: "What is 'elision' in connected speech?", options: ["Adding extra sounds", "Dropping sounds for easier pronunciation", "Stressing syllables", "Changing pitch"], answer: 1, explanation: "Elision is dropping sounds in connected speech." },
-      { category: "Speech Clarity", q: "What makes a conclusion memorable?", options: ["Introducing new points", "Summarizing and ending with a call to action or powerful quote", "Saying 'that's all'", "Reading from notes"], answer: 1, explanation: "A strong conclusion reinforces your message." },
-      { category: "Tone & Pronunciation", q: "In 'I can do it' vs 'I can't do it', the key difference in speech is:", options: ["Volume", "Speed", "Vowel length in can/can't", "Pitch only"], answer: 2, explanation: "'can' has a short schwa sound while 'can't' has a longer vowel." },
-      { category: "Speech Clarity", q: "What is 'signposting' in a speech?", options: ["Using visual signs", "Telling the audience where you are in the speech", "Pointing at slides", "Using hand gestures"], answer: 1, explanation: "Signposting uses phrases to help the audience follow your structure." },
-      { category: "Tone & Pronunciation", q: "The word 'entrepreneur' originates from which language?", options: ["Latin", "French", "Spanish", "German"], answer: 1, explanation: "'Entrepreneur' comes from French." },
-      { category: "Tone & Pronunciation", q: "What is 'retroflex' pronunciation?", options: ["Speaking backwards", "Curling the tongue back to produce sounds like 'r'", "Nasal sounds", "Lip sounds"], answer: 1, explanation: "Retroflex sounds involve curling the tongue tip back." },
-      { category: "Speech Clarity", q: "Which is a characteristic of an effective speech opener?", options: ["Starting with your name only", "Being vague about the topic", "Creating immediate curiosity or relevance", "Reading statistics slowly"], answer: 2, explanation: "An effective opener hooks the audience immediately." },
-      { category: "Tone & Pronunciation", q: "What happens to the voice when a speaker is nervous?", options: ["It becomes deeper", "It rises in pitch and becomes faster", "It slows down", "It becomes louder"], answer: 1, explanation: "Nervousness tightens the vocal cords, raising pitch and increasing speaking rate." }
-    ]
-  },
-  6: {
-    tip: "💡 Day 6 Tip: Silence is a speaker's secret weapon. A 3-second pause feels long to you but powerful to your audience.",
-    questions: [
-      { category: "Speech Clarity", q: "What is 'vocal variety'?", options: ["Using different languages", "Changing pitch, pace, and volume for impact", "Having multiple speakers", "Using different accents"], answer: 1, explanation: "Vocal variety means consciously varying pitch, pace, and volume." },
-      { category: "Tone & Pronunciation", q: "The 'gh' in 'though' is:", options: ["Pronounced as 'f'", "Pronounced as 'g'", "Silent", "Pronounced as 'ch'"], answer: 2, explanation: "In 'though', 'gh' is silent." },
-      { category: "Tone & Pronunciation", q: "What is 'aspiration' in pronunciation?", options: ["Breathing deeply", "A puff of air after certain consonants like 'p', 't', 'k'", "Nasal sounds", "Vowel lengthening"], answer: 1, explanation: "Aspiration is the burst of air after unvoiced stops." },
-      { category: "Speech Clarity", q: "What does 'active listening' in an audience mean for a speaker?", options: ["Nothing, speakers don't need to worry about it", "The speaker should adjust based on audience reactions", "The audience should take notes", "Speakers should speak louder"], answer: 1, explanation: "An effective speaker reads audience reactions and adapts." },
-      { category: "Tone & Pronunciation", q: "Which phrase demonstrates 'weak form' pronunciation?", options: ["'AND' stressed in every sentence", "'and' reduced to 'n' in connected speech", "Pausing before 'and'", "Capitalizing AND"], answer: 1, explanation: "Function words use weak forms in natural speech." },
-      { category: "Tone & Pronunciation", q: "The word 'cache' is pronounced:", options: ["catch", "cash", "ca-shay", "ca-che"], answer: 1, explanation: "'Cache' is pronounced 'cash'." },
-      { category: "Speech Clarity", q: "What is 'anaphora' in speechmaking?", options: ["A type of microphone", "Repeating a phrase at the beginning of successive sentences", "A breathing technique", "A type of pause"], answer: 1, explanation: "Anaphora creates rhythm and emphasis through repetition." },
-      { category: "Tone & Pronunciation", q: "In English, stress in a sentence usually falls on:", options: ["Articles and prepositions", "Content words like nouns and verbs", "Every word equally", "Only the last word"], answer: 1, explanation: "Content words carry meaning and receive stress." },
-      { category: "Speech Clarity", q: "What is the danger of reading directly from a script?", options: ["It ensures accuracy", "It loses eye contact and natural delivery", "It saves time", "It reduces nervousness"], answer: 1, explanation: "Reading from a script breaks eye contact and reduces authenticity." },
-      { category: "Tone & Pronunciation", q: "The term 'prosody' refers to:", options: ["A type of poetry", "The rhythm, stress, and intonation patterns of speech", "Vocabulary choice", "Speech disorders"], answer: 1, explanation: "Prosody is the musicality of language." }
-    ]
-  },
-  7: {
-    tip: "💡 Day 7 Tip: You've completed the full week! Master speakers never stop learning. Keep practicing daily!",
-    questions: [
-      { category: "Tone & Pronunciation", q: "What is 'coarticulation' in speech?", options: ["Speaking two languages", "Overlapping articulation of consecutive sounds", "Using hand gestures", "Voice projection"], answer: 1, explanation: "Coarticulation means sounds overlap and influence each other in continuous speech." },
-      { category: "Speech Clarity", q: "Which rhetorical device asks a question the speaker then answers?", options: ["Metaphor", "Hyperbole", "Rhetorical question", "Anaphora"], answer: 2, explanation: "A rhetorical question is posed for effect, not to get an answer." },
-      { category: "Tone & Pronunciation", q: "The word 'quinoa' is pronounced:", options: ["kwin-o-a", "KEEN-wah", "kwi-NO-ah", "kee-NO-ah"], answer: 1, explanation: "'Quinoa' is pronounced 'KEEN-wah'." },
-      { category: "Speech Clarity", q: "What is 'ethos' in public speaking?", options: ["The emotion in speech", "The speaker's credibility and trustworthiness", "The logic of arguments", "The structure of speech"], answer: 1, explanation: "Ethos refers to establishing the speaker's authority and credibility." },
-      { category: "Tone & Pronunciation", q: "What causes 'upspeak' or 'high rising terminal'?", options: ["Confidence", "Every statement ending with a rising pitch like a question", "Loud volume", "Fast speech"], answer: 1, explanation: "Upspeak makes statements sound like questions, reducing perceived confidence." },
-      { category: "Speech Clarity", q: "What is 'logos' in persuasive speaking?", options: ["A company logo used in speech", "Using logic, facts, and reasoning to persuade", "Emotional appeal", "Speaker credibility"], answer: 1, explanation: "Logos is the logical appeal — using evidence and reasoning." },
-      { category: "Tone & Pronunciation", q: "What is the 'glottal stop'?", options: ["A breathing technique", "Closing the glottis to create a sound, replacing 't' in words like 'button'", "A type of accent", "A pronunciation error"], answer: 1, explanation: "The glottal stop is a consonant sound made by closing the vocal folds." },
-      { category: "Speech Clarity", q: "What is 'pathos' in speechmaking?", options: ["Using data and logic", "Appealing to the audience's emotions", "Speaker's credibility", "Speech structure"], answer: 1, explanation: "Pathos is the emotional appeal." },
-      { category: "Tone & Pronunciation", q: "Advanced speakers use 'nuclear stress' to:", options: ["Speak about science", "Place the most prominent stress on the most important word in a phrase", "Avoid all stress", "Speak in monotone"], answer: 1, explanation: "Nuclear stress is the primary emphasis in an utterance." },
-      { category: "Speech Clarity", q: "After completing 7 days of learning, what is the MOST important next step?", options: ["Stop practicing", "Read more theory only", "Apply the skills through real practice and recording yourself", "Wait for more lessons"], answer: 2, explanation: "Knowledge without practice is incomplete. Record yourself and keep improving daily!" }
-    ]
-  }
-};
-
-  let streakData = JSON.parse(localStorage.getItem('streakData')) || {
-    currentDay: 1, lastCompletedDate: null, completedDays: [], frozen: false
+  const dayContent = {
+    1: { tip: "💡 Day 1 Tip: Tone is the emotion behind your words. A rising tone shows curiosity, a falling tone shows confidence.", questions: [ { category: "Tone & Pronunciation", q: "Which sentence uses a confident falling tone?", options: ["Is this correct?", "This is correct.", "Maybe this is correct?", "Could this be correct?"], answer: 1, explanation: "Statements with a falling tone at the end sound confident and assertive." }, { category: "Tone & Pronunciation", q: "The word 'present' as a noun is stressed on which syllable?", options: ["pre-SENT", "PRE-sent", "Both equal", "Neither"], answer: 1, explanation: "As a noun, 'PRE-sent' (gift). As a verb, 'pre-SENT' (to give)." }, { category: "Speech Clarity", q: "What is the best way to improve speech clarity?", options: ["Speak faster", "Swallow word endings", "Pause between key points", "Use more filler words"], answer: 2, explanation: "Pausing gives listeners time to absorb your message." }, { category: "Tone & Pronunciation", q: "Which word has a silent letter?", options: ["cat", "knife", "run", "map"], answer: 1, explanation: "In 'knife', the 'k' is silent." }, { category: "Speech Clarity", q: "Which habit hurts speech clarity the most?", options: ["Pausing", "Eye contact", "Mumbling", "Breathing"], answer: 2, explanation: "Mumbling makes words unclear and hard to follow." }, { category: "Tone & Pronunciation", q: "How many syllables does 'comfortable' have in natural speech?", options: ["4", "3", "2", "5"], answer: 1, explanation: "'Comfortable' is typically pronounced as 3 syllables: COMF-ter-ble." }, { category: "Tone & Pronunciation", q: "A speaker who uses a monotone voice sounds:", options: ["Confident", "Energetic", "Boring", "Friendly"], answer: 2, explanation: "Monotone means no variation in pitch." }, { category: "Speech Clarity", q: "What does 'articulation' mean in speech?", options: ["Speaking loudly", "Forming words clearly with mouth and tongue", "Using big words", "Breathing deeply"], answer: 1, explanation: "Articulation is the physical process of making clear, distinct sounds." }, { category: "Tone & Pronunciation", q: "Which is the correct pronunciation of 'Wednesday'?", options: ["Wed-nes-day", "Wenz-day", "Wed-en-day", "Weed-day"], answer: 1, explanation: "Wednesday is pronounced 'WENZ-day'." }, { category: "Speech Clarity", q: "Why should speakers avoid filler words like 'um' and 'uh'?", options: ["They add personality", "They show confidence", "They distract listeners", "They improve pacing"], answer: 2, explanation: "Filler words break the flow and make the speaker seem unprepared." } ] },
+    2: { tip: "💡 Day 2 Tip: Pitch variation keeps your audience engaged. Practice going from high to low pitch within a sentence.", questions: [ { category: "Tone & Pronunciation", q: "What is 'pitch' in speech?", options: ["How loud you speak", "How high or low your voice sounds", "How fast you speak", "How clear your words are"], answer: 1, explanation: "Pitch refers to the highness or lowness of your voice." }, { category: "Tone & Pronunciation", q: "Which word pair are homophones?", options: ["there / their", "cat / bat", "run / fun", "big / bag"], answer: 0, explanation: "'there' and 'their' sound identical." }, { category: "Speech Clarity", q: "What is the ideal speaking rate for public speaking?", options: ["50-80 words per minute", "130-160 words per minute", "200+ words per minute", "300 words per minute"], answer: 1, explanation: "130-160 wpm is the ideal conversational rate." }, { category: "Tone & Pronunciation", q: "In the word 'photograph', which syllable is stressed?", options: ["pho-TO-graph", "PHO-to-graph", "pho-to-GRAPH", "All equal"], answer: 1, explanation: "PHO-to-graph — the stress falls on the first syllable." }, { category: "Speech Clarity", q: "Eye contact during a speech helps to:", options: ["Confuse the audience", "Build connection and trust", "Show nervousness", "Speed up delivery"], answer: 1, explanation: "Eye contact creates a personal connection with listeners." }, { category: "Tone & Pronunciation", q: "The 'th' sound in 'think' is:", options: ["Voiced", "Unvoiced", "Silent", "Nasal"], answer: 1, explanation: "The 'th' in 'think' is unvoiced." }, { category: "Speech Clarity", q: "Which technique helps control nervousness before speaking?", options: ["Speaking faster", "Deep breathing", "Avoiding the audience", "Using more filler words"], answer: 1, explanation: "Deep breathing reduces anxiety." }, { category: "Tone & Pronunciation", q: "What does 'intonation' mean?", options: ["Volume of speech", "Rise and fall of pitch in speech", "Speed of speech", "Clarity of words"], answer: 1, explanation: "Intonation is the pattern of pitch changes across sentences." }, { category: "Speech Clarity", q: "A speaker should pause:", options: ["Never, it shows weakness", "Only at the end", "Before and after key points", "Every 5 seconds"], answer: 2, explanation: "Strategic pauses give emphasis and allow absorption." }, { category: "Tone & Pronunciation", q: "Which word is commonly mispronounced as 'ex-presso'?", options: ["Express", "Espresso", "Expresso", "Impress"], answer: 1, explanation: "The correct word is 'espresso' — there is no 'x' in it." } ] },
+    3: { tip: "💡 Day 3 Tip: Volume control is power. Lowering your voice at key moments draws the audience in.", questions: [ { category: "Speech Clarity", q: "What is 'projection' in public speaking?", options: ["Using a microphone", "Throwing your voice to reach the back of the room", "Showing slides", "Making eye contact"], answer: 1, explanation: "Projection means controlling volume so your voice carries clearly." }, { category: "Tone & Pronunciation", q: "Which sentence has correct word stress?", options: ["I didn't say HE stole it", "I DIDN'T say he stole it", "I didn't SAY he stole it", "All of the above change meaning"], answer: 3, explanation: "Stressing different words changes the meaning entirely." }, { category: "Tone & Pronunciation", q: "The word 'colonel' is pronounced as:", options: ["col-o-nel", "ker-nel", "col-nel", "co-lo-nel"], answer: 1, explanation: "'Colonel' is pronounced 'KER-nel'." }, { category: "Speech Clarity", q: "What is 'chunking' in speech delivery?", options: ["Breaking speech into fast segments", "Grouping words into meaningful phrases with pauses", "Using bullet points", "Repeating key words"], answer: 1, explanation: "Chunking groups related words together." }, { category: "Tone & Pronunciation", q: "A rising intonation at the end of a sentence usually indicates:", options: ["A statement", "A command", "A question or uncertainty", "Anger"], answer: 2, explanation: "Rising intonation signals a question or uncertainty." }, { category: "Speech Clarity", q: "Which is the best opening for a speech?", options: ["'Um, so today I will talk about...'", "'Good morning. Did you know that 75% of people fear public speaking?'", "'I'm not very good at this but...'", "'So basically what I want to say is...'"], answer: 1, explanation: "A strong opening with a surprising fact grabs attention." }, { category: "Tone & Pronunciation", q: "How is the 'g' pronounced in 'gnome'?", options: ["Hard g sound", "Soft j sound", "Silent", "Like 'n'"], answer: 2, explanation: "In 'gnome', the 'g' is silent." }, { category: "Tone & Pronunciation", q: "Which word has the stress on the second syllable?", options: ["ALpha", "beGIN", "TAble", "OPen"], answer: 1, explanation: "'beGIN' has stress on the second syllable." }, { category: "Speech Clarity", q: "What is the purpose of a 'power pause'?", options: ["To forget your speech", "To create dramatic emphasis and let ideas sink in", "To drink water", "To check your notes"], answer: 1, explanation: "A power pause gives weight and lets the audience absorb ideas." }, { category: "Tone & Pronunciation", q: "Which of these is an example of 'liaison' in speech?", options: ["Saying each word separately", "Linking the end of one word to the start of the next", "Speaking louder", "Pausing between each word"], answer: 1, explanation: "Liaison connects words smoothly in natural speech." } ] },
+    4: { tip: "💡 Day 4 Tip: Resonance gives your voice warmth and depth. Speak from your chest, not your throat.", questions: [ { category: "Tone & Pronunciation", q: "What is 'resonance' in voice production?", options: ["How fast you speak", "The vibration and amplification of sound in your body", "How clearly you pronounce words", "The pitch of your voice"], answer: 1, explanation: "Resonance is the amplification of sound using body cavities." }, { category: "Speech Clarity", q: "Which transition word best shows contrast?", options: ["Furthermore", "However", "Therefore", "Similarly"], answer: 1, explanation: "'However' signals a contrast or opposing idea." }, { category: "Tone & Pronunciation", q: "The word 'mischievous' has how many syllables?", options: ["4 (mis-chie-vi-ous)", "3 (mis-che-vous)", "2 (mis-chvous)", "5"], answer: 1, explanation: "'Mischievous' has 3 syllables: MIS-che-vous." }, { category: "Speech Clarity", q: "What does 'pacing' mean in speech delivery?", options: ["Walking while speaking", "The speed and rhythm of your speech", "Using hand gestures", "Making eye contact"], answer: 1, explanation: "Pacing is the variation of speed in your speech." }, { category: "Tone & Pronunciation", q: "Which word contains a schwa sound (ə)?", options: ["cat", "about", "hit", "met"], answer: 1, explanation: "The first 'a' in 'about' is a schwa." }, { category: "Tone & Pronunciation", q: "What is 'assimilation' in pronunciation?", options: ["Learning new words", "When sounds change due to neighboring sounds", "Stressing syllables", "Speaking louder"], answer: 1, explanation: "Assimilation is when sounds blend together in natural speech." }, { category: "Speech Clarity", q: "A speech without structure is like:", options: ["A song without music", "A book without pages", "A map without a destination", "All of the above"], answer: 3, explanation: "Structure gives your speech direction." }, { category: "Tone & Pronunciation", q: "The 'p' in 'pneumonia' is:", options: ["Pronounced normally", "Silent", "Aspirated", "Nasal"], answer: 1, explanation: "In 'pneumonia', the 'p' is silent." }, { category: "Speech Clarity", q: "Why is a conversational tone preferred in speeches?", options: ["It sounds rehearsed", "It feels natural and relatable to the audience", "It removes all emotion", "It requires no preparation"], answer: 1, explanation: "A conversational tone makes the audience feel spoken WITH, not AT." }, { category: "Tone & Pronunciation", q: "Which sentence demonstrates correct emphasis?", options: ["I LOVE eating pizza", "I love EATING pizza", "I love eating PIZZA", "All change the meaning"], answer: 3, explanation: "Stressing different words shifts the focus of meaning." } ] },
+    5: { tip: "💡 Day 5 Tip: The rule of three is powerful in speech — group ideas in threes for maximum impact.", questions: [ { category: "Speech Clarity", q: "What is the 'rule of three' in speechmaking?", options: ["Speak for exactly 3 minutes", "Group ideas in sets of three for impact", "Use three pauses per sentence", "Have three main slides"], answer: 1, explanation: "The rule of three creates rhythm and memorability." }, { category: "Tone & Pronunciation", q: "The word 'debris' is pronounced:", options: ["deb-ris", "deh-bree", "de-BRIS", "DEB-ree"], answer: 1, explanation: "'Debris' is pronounced 'deh-BREE' — the 's' is silent." }, { category: "Tone & Pronunciation", q: "What is 'elision' in connected speech?", options: ["Adding extra sounds", "Dropping sounds for easier pronunciation", "Stressing syllables", "Changing pitch"], answer: 1, explanation: "Elision is dropping sounds in connected speech." }, { category: "Speech Clarity", q: "What makes a conclusion memorable?", options: ["Introducing new points", "Summarizing and ending with a call to action or powerful quote", "Saying 'that's all'", "Reading from notes"], answer: 1, explanation: "A strong conclusion reinforces your message." }, { category: "Tone & Pronunciation", q: "In 'I can do it' vs 'I can't do it', the key difference in speech is:", options: ["Volume", "Speed", "Vowel length in can/can't", "Pitch only"], answer: 2, explanation: "'can' has a short schwa sound while 'can't' has a longer vowel." }, { category: "Speech Clarity", q: "What is 'signposting' in a speech?", options: ["Using visual signs", "Telling the audience where you are in the speech", "Pointing at slides", "Using hand gestures"], answer: 1, explanation: "Signposting uses phrases to help the audience follow your structure." }, { category: "Tone & Pronunciation", q: "The word 'entrepreneur' originates from which language?", options: ["Latin", "French", "Spanish", "German"], answer: 1, explanation: "'Entrepreneur' comes from French." }, { category: "Tone & Pronunciation", q: "What is 'retroflex' pronunciation?", options: ["Speaking backwards", "Curling the tongue back to produce sounds like 'r'", "Nasal sounds", "Lip sounds"], answer: 1, explanation: "Retroflex sounds involve curling the tongue tip back." }, { category: "Speech Clarity", q: "Which is a characteristic of an effective speech opener?", options: ["Starting with your name only", "Being vague about the topic", "Creating immediate curiosity or relevance", "Reading statistics slowly"], answer: 2, explanation: "An effective opener hooks the audience immediately." }, { category: "Tone & Pronunciation", q: "What happens to the voice when a speaker is nervous?", options: ["It becomes deeper", "It rises in pitch and becomes faster", "It slows down", "It becomes louder"], answer: 1, explanation: "Nervousness tightens the vocal cords, raising pitch and increasing speaking rate." } ] },
+    6: { tip: "💡 Day 6 Tip: Silence is a speaker's secret weapon. A 3-second pause feels long to you but powerful to your audience.", questions: [ { category: "Speech Clarity", q: "What is 'vocal variety'?", options: ["Using different languages", "Changing pitch, pace, and volume for impact", "Having multiple speakers", "Using different accents"], answer: 1, explanation: "Vocal variety means consciously varying pitch, pace, and volume." }, { category: "Tone & Pronunciation", q: "The 'gh' in 'though' is:", options: ["Pronounced as 'f'", "Pronounced as 'g'", "Silent", "Pronounced as 'ch'"], answer: 2, explanation: "In 'though', 'gh' is silent." }, { category: "Tone & Pronunciation", q: "What is 'aspiration' in pronunciation?", options: ["Breathing deeply", "A puff of air after certain consonants like 'p', 't', 'k'", "Nasal sounds", "Vowel lengthening"], answer: 1, explanation: "Aspiration is the burst of air after unvoiced stops." }, { category: "Speech Clarity", q: "What does 'active listening' in an audience mean for a speaker?", options: ["Nothing", "The speaker should adjust based on audience reactions", "The audience should take notes", "Speakers should speak louder"], answer: 1, explanation: "An effective speaker reads audience reactions and adapts." }, { category: "Tone & Pronunciation", q: "Which phrase demonstrates 'weak form' pronunciation?", options: ["'AND' stressed in every sentence", "'and' reduced to 'n' in connected speech", "Pausing before 'and'", "Capitalizing AND"], answer: 1, explanation: "Function words use weak forms in natural speech." }, { category: "Tone & Pronunciation", q: "The word 'cache' is pronounced:", options: ["catch", "cash", "ca-shay", "ca-che"], answer: 1, explanation: "'Cache' is pronounced 'cash'." }, { category: "Speech Clarity", q: "What is 'anaphora' in speechmaking?", options: ["A type of microphone", "Repeating a phrase at the beginning of successive sentences", "A breathing technique", "A type of pause"], answer: 1, explanation: "Anaphora creates rhythm and emphasis through repetition." }, { category: "Tone & Pronunciation", q: "In English, stress in a sentence usually falls on:", options: ["Articles and prepositions", "Content words like nouns and verbs", "Every word equally", "Only the last word"], answer: 1, explanation: "Content words carry meaning and receive stress." }, { category: "Speech Clarity", q: "What is the danger of reading directly from a script?", options: ["It ensures accuracy", "It loses eye contact and natural delivery", "It saves time", "It reduces nervousness"], answer: 1, explanation: "Reading from a script breaks eye contact and reduces authenticity." }, { category: "Tone & Pronunciation", q: "The term 'prosody' refers to:", options: ["A type of poetry", "The rhythm, stress, and intonation patterns of speech", "Vocabulary choice", "Speech disorders"], answer: 1, explanation: "Prosody is the musicality of language." } ] },
+    7: { tip: "💡 Day 7 Tip: You've completed the full week! Master speakers never stop learning. Keep practicing daily!", questions: [ { category: "Tone & Pronunciation", q: "What is 'coarticulation' in speech?", options: ["Speaking two languages", "Overlapping articulation of consecutive sounds", "Using hand gestures", "Voice projection"], answer: 1, explanation: "Coarticulation means sounds overlap and influence each other." }, { category: "Speech Clarity", q: "Which rhetorical device asks a question the speaker then answers?", options: ["Metaphor", "Hyperbole", "Rhetorical question", "Anaphora"], answer: 2, explanation: "A rhetorical question is posed for effect, not to get an answer." }, { category: "Tone & Pronunciation", q: "The word 'quinoa' is pronounced:", options: ["kwin-o-a", "KEEN-wah", "kwi-NO-ah", "kee-NO-ah"], answer: 1, explanation: "'Quinoa' is pronounced 'KEEN-wah'." }, { category: "Speech Clarity", q: "What is 'ethos' in public speaking?", options: ["The emotion in speech", "The speaker's credibility and trustworthiness", "The logic of arguments", "The structure of speech"], answer: 1, explanation: "Ethos refers to establishing the speaker's authority." }, { category: "Tone & Pronunciation", q: "What causes 'upspeak' or 'high rising terminal'?", options: ["Confidence", "Every statement ending with a rising pitch like a question", "Loud volume", "Fast speech"], answer: 1, explanation: "Upspeak makes statements sound like questions." }, { category: "Speech Clarity", q: "What is 'logos' in persuasive speaking?", options: ["A company logo", "Using logic, facts, and reasoning to persuade", "Emotional appeal", "Speaker credibility"], answer: 1, explanation: "Logos is the logical appeal." }, { category: "Tone & Pronunciation", q: "What is the 'glottal stop'?", options: ["A breathing technique", "Closing the glottis to create a sound, replacing 't' in words like 'button'", "A type of accent", "A pronunciation error"], answer: 1, explanation: "The glottal stop is made by closing the vocal folds." }, { category: "Speech Clarity", q: "What is 'pathos' in speechmaking?", options: ["Using data and logic", "Appealing to the audience's emotions", "Speaker's credibility", "Speech structure"], answer: 1, explanation: "Pathos is the emotional appeal." }, { category: "Tone & Pronunciation", q: "Advanced speakers use 'nuclear stress' to:", options: ["Speak about science", "Place the most prominent stress on the most important word", "Avoid all stress", "Speak in monotone"], answer: 1, explanation: "Nuclear stress is the primary emphasis in an utterance." }, { category: "Speech Clarity", q: "After completing 7 days of learning, what is the MOST important next step?", options: ["Stop practicing", "Read more theory only", "Apply the skills through real practice and recording yourself", "Wait for more lessons"], answer: 2, explanation: "Knowledge without practice is incomplete. Keep improving daily!" } ] }
   };
 
-  let current = 0, score = 0, activeDay = streakData.currentDay;
+  let streakData = { currentDay: 1, lastCompletedDate: null, completedDays: [], frozen: false };
+  let current = 0, score = 0, activeDay = 1;
+  let supabaseRef = null;
 
   function getTodayStr() { return new Date().toISOString().split('T')[0]; }
   function getYesterdayStr() { const d = new Date(); d.setDate(d.getDate() - 1); return d.toISOString().split('T')[0]; }
-
-  function saveStreak() { localStorage.setItem('streakData', JSON.stringify(streakData)); }
 
   function buildStreakBar() {
     const bar = document.getElementById('streakBar');
@@ -293,13 +193,41 @@ const dayContent = {
     document.getElementById('streakSub').textContent = completed === 7 ? 'You completed the full streak! 🎉' : `Keep going! Day ${streakData.currentDay} is unlocked.`;
   }
 
+  async function saveStreak() {
+    localStorage.setItem('streakData', JSON.stringify(streakData));
+    if (supabaseRef) {
+      try {
+        const { data: { user } } = await supabaseRef.auth.getUser();
+        if (user) {
+          const { data: existing } = await supabaseRef.from('streaks').select('id').eq('user_id', user.id).single();
+          if (existing) {
+            await supabaseRef.from('streaks').update({
+              current_day: streakData.currentDay,
+              completed_days: streakData.completedDays,
+              last_completed_date: streakData.lastCompletedDate,
+              frozen: streakData.frozen
+            }).eq('user_id', user.id);
+          } else {
+            await supabaseRef.from('streaks').insert({
+              user_id: user.id,
+              current_day: streakData.currentDay,
+              completed_days: streakData.completedDays,
+              last_completed_date: streakData.lastCompletedDate,
+              frozen: streakData.frozen
+            });
+          }
+        }
+      } catch(e) { console.log('Streak save error:', e); }
+    }
+  }
+
   function checkStreakStatus() {
     const today = getTodayStr();
     const yesterday = getYesterdayStr();
     const last = streakData.lastCompletedDate;
     if (last === today) { showDoneCard(); return; }
     if (last && last !== today && last !== yesterday) {
-      streakData.frozen = true; saveStreak();
+      streakData.frozen = true;
       document.getElementById('frozenMsg').style.display = 'block';
     } else { streakData.frozen = false; }
     if (streakData.currentDay > 7) { showDoneCard(); return; }
@@ -361,7 +289,7 @@ const dayContent = {
     else showResults();
   }
 
-  function showResults() {
+  async function showResults() {
     document.getElementById('quizCard').style.display = 'none';
     document.getElementById('resultCard').style.display = 'block';
     document.getElementById('scoreNum').textContent = score;
@@ -375,13 +303,47 @@ const dayContent = {
       streakData.currentDay = activeDay + 1;
       streakData.lastCompletedDate = getTodayStr();
       streakData.frozen = false;
-      saveStreak();
+      await saveStreak();
       buildStreakBar();
     }
   }
 
-  buildStreakBar();
-  checkStreakStatus();
+  // Init — load streak from Supabase if logged in, else localStorage
+  async function init() {
+    const local = JSON.parse(localStorage.getItem('streakData'));
+    if (local) streakData = local;
+
+    try {
+      const { supabase } = await import('./auth.js');
+      supabaseRef = supabase;
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+        document.getElementById('syncBadge').textContent = `☁️ Synced to account: ${user.email}`;
+        const { data } = await supabase.from('streaks').select('*').eq('user_id', user.id).single();
+        if (data) {
+          streakData = {
+            currentDay: data.current_day,
+            completedDays: data.completed_days || [],
+            lastCompletedDate: data.last_completed_date,
+            frozen: data.frozen
+          };
+          localStorage.setItem('streakData', JSON.stringify(streakData));
+        }
+      } else {
+        document.getElementById('syncBadge').textContent = '💾 Saved locally — Login to sync across devices';
+      }
+    } catch(e) {
+      console.log('Auth not available, using localStorage');
+      document.getElementById('syncBadge').textContent = '💾 Saved locally';
+    }
+
+    activeDay = streakData.currentDay;
+    buildStreakBar();
+    checkStreakStatus();
+  }
+
+  init();
 </script>
 
 <script type="module" src="login-widget.js"></script>
