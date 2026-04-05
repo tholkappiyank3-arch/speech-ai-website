@@ -38,10 +38,7 @@
     .section-score-item .s-label { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
     .section-score-item .s-val { font-size: 1.3rem; font-weight: 900; color: var(--primary); }
     .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
-    .loading-box { text-align: center; padding: 40px 20px; }
-    .loading-box .spinner { width: 48px; height: 48px; border: 4px solid rgba(255,75,110,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-box p { font-weight: 700; color: var(--text-muted); }
+    .set-badge { font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-bottom: 8px; font-weight: 600; }
     body.dark .option { background: rgba(22,22,31,0.8); color: #f0f0ff; border-color: rgba(124,131,255,0.2); }
     body.dark .option:hover { background: rgba(124,131,255,0.1); }
     body.dark .option.correct { background: rgba(34,197,94,0.15); color: #4ade80; }
@@ -80,15 +77,11 @@
   <div class="page-header">
     <div class="badge">📋 Skill Diagnostic</div>
     <h1>Know Your <span class="highlight">Level</span></h1>
-    <p class="subtitle">25 AI-generated questions covering comprehension, grammar, pronunciation, and vocabulary.</p>
+    <p class="subtitle">25 questions covering comprehension, grammar, pronunciation, and vocabulary.</p>
   </div>
 
-  <div class="card loading-box" id="loadingCard">
-    <div class="spinner"></div>
-    <p>AI is generating your 25 questions...</p>
-  </div>
-
-  <div class="card quiz-wrap" id="quizCard" style="display:none;">
+  <div class="card quiz-wrap" id="quizCard">
+    <div class="set-badge" id="setBadge"></div>
     <div class="q-number" id="qNumber">Question 1 of 25</div>
     <div class="progress-bar-bg">
       <div class="progress-bar-fill" id="progressBar" style="width:4%"></div>
@@ -127,88 +120,82 @@
       </div>
     </div>
     <div class="result-actions">
-      <button class="btn-secondary" onclick="startQuiz()">🔄 New AI Test</button>
+      <button class="btn-secondary" onclick="location.reload()">🔄 Try Other Set</button>
       <a href="exercise.html"><button class="btn-primary">🎤 Start Practicing</button></a>
     </div>
   </div>
 </div>
 
 <script>
-let questions = [], current = 0, score = 0;
+// ===== QUESTION SET 1 =====
+const set1 = [
+  { category: "Comprehension", question: "Read: 'The speaker paused dramatically before revealing the answer.' What effect does the pause create?", options: ["It shows the speaker forgot the answer", "It builds suspense and emphasizes the reveal", "It indicates nervousness", "It gives the audience time to leave"], answer: 1 },
+  { category: "Comprehension", question: "Read: 'Her monotone delivery put the audience to sleep despite her brilliant content.' What is the main issue?", options: ["The content was poor", "The delivery lacked vocal variety", "She spoke too fast", "She used too many filler words"], answer: 1 },
+  { category: "Comprehension", question: "Read: 'He used anaphora — repeating I have a dream — to build emotional momentum.' What is anaphora?", options: ["A type of pause", "Repetition of a phrase at the start of successive sentences", "A breathing technique", "A question and answer technique"], answer: 1 },
+  { category: "Comprehension", question: "Read: 'The debater used logos — citing statistics and peer-reviewed research — to support her claim.' What is logos?", options: ["Emotional appeal", "Appeal through logic and evidence", "Speaker credibility", "Use of metaphors"], answer: 1 },
+  { category: "Comprehension", question: "Read: 'Despite his strong vocabulary, his mispronunciation of key terms undermined his credibility.' What is the main takeaway?", options: ["Vocabulary is not important", "Pronunciation affects how credible a speaker sounds", "Key terms should be avoided", "Credibility depends only on content"], answer: 1 },
+  { category: "Grammar", question: "Choose the correct sentence:", options: ["Neither of the students have submitted their work.", "Neither of the students has submitted their work.", "Neither of the students has submitted his work.", "Neither of the student has submitted their work."], answer: 1 },
+  { category: "Grammar", question: "Which sentence uses the subjunctive mood correctly?", options: ["I wish I was taller.", "I wish I were taller.", "I wish I am taller.", "I wish I be taller."], answer: 1 },
+  { category: "Grammar", question: "Identify the correct passive voice:", options: ["The report was wrote by the manager.", "The report was written by the manager.", "The report were written by the manager.", "The report has wrote by the manager."], answer: 1 },
+  { category: "Grammar", question: "Which is the correct third conditional?", options: ["If I studied, I would pass.", "If I had studied, I would have passed.", "If I would study, I will pass.", "If I study, I would have passed."], answer: 1 },
+  { category: "Grammar", question: "Choose the correct article usage:", options: ["She is best student in class.", "She is the best student in the class.", "She is a best student in class.", "She is best student in the class."], answer: 1 },
+  { category: "Grammar", question: "Which sentence has correct subject-verb agreement?", options: ["The team are playing well.", "The team is playing well.", "The teams is playing well.", "The team were playing good."], answer: 1 },
+  { category: "Grammar", question: "Identify the dangling modifier:", options: ["Running quickly, the bus was missed.", "Running quickly, she missed the bus.", "She missed the bus running quickly.", "The bus was missed because she ran."], answer: 0 },
+  { category: "Grammar", question: "Choose the correct tense: 'By the time she arrived, they ___ for two hours.'", options: ["waited", "were waiting", "had been waiting", "have been waiting"], answer: 2 },
+  { category: "Grammar", question: "Which uses the gerund correctly?", options: ["She avoided to speak in public.", "She avoided speaking in public.", "She avoided speak in public.", "She avoided spoken in public."], answer: 1 },
+  { category: "Grammar", question: "Identify the correct comparative form:", options: ["This speech is more better than the last.", "This speech is better than the last.", "This speech is more good than the last.", "This speech is gooder than the last."], answer: 1 },
+  { category: "Pronunciation", question: "Which word has a silent 'b'?", options: ["bomb", "born", "bent", "bind"], answer: 0 },
+  { category: "Pronunciation", question: "How is 'cache' correctly pronounced?", options: ["ka-SHAY", "CATCH", "CASH", "KAY-she"], answer: 2 },
+  { category: "Pronunciation", question: "Which word is stressed on the SECOND syllable?", options: ["PREsent (noun)", "beGIN", "TAble", "OPen"], answer: 1 },
+  { category: "Pronunciation", question: "The word 'colonel' is pronounced as:", options: ["col-O-nel", "KER-nel", "COL-nel", "col-o-NEL"], answer: 1 },
+  { category: "Pronunciation", question: "In which word does 'gh' make an 'f' sound?", options: ["though", "through", "tough", "thought"], answer: 2 },
+  { category: "Vocabulary", question: "What does 'loquacious' mean?", options: ["Silent and reserved", "Extremely talkative", "Well-organized", "Highly intelligent"], answer: 1 },
+  { category: "Vocabulary", question: "Choose the correct word: 'His speech was ___; it inspired everyone in the room.'", options: ["mundane", "banal", "galvanizing", "tedious"], answer: 2 },
+  { category: "Vocabulary", question: "What is the meaning of 'verbose'?", options: ["Using too many words", "Speaking very quietly", "Being direct and concise", "Having a strong accent"], answer: 0 },
+  { category: "Vocabulary", question: "Which word means 'to speak in a hesitant, unclear way'?", options: ["articulate", "enunciate", "mumble", "project"], answer: 2 },
+  { category: "Vocabulary", question: "What does 'extemporaneous' mean in the context of speaking?", options: ["Extremely long", "Spoken without preparation", "Very emotional", "Using complex vocabulary"], answer: 1 }
+];
+
+// ===== QUESTION SET 2 =====
+const set2 = [
+  { category: "Comprehension", question: "Read: 'The politician used pathos — sharing a personal story of loss — to connect with voters.' What is pathos?", options: ["Logical argument", "Use of statistics", "Emotional appeal", "Speaker's credibility"], answer: 2 },
+  { category: "Comprehension", question: "Read: 'Her ethos was established through her 20 years of medical experience before she spoke.' What is ethos?", options: ["Emotional connection", "Logical reasoning", "Credibility and trustworthiness", "Use of examples"], answer: 2 },
+  { category: "Comprehension", question: "Read: 'He signposted his speech clearly: firstly, secondly, and finally — the audience always knew where he was.' What is signposting?", options: ["Using visual aids", "Guiding the audience through the speech structure", "Repeating key points", "Asking questions"], answer: 1 },
+  { category: "Comprehension", question: "Read: 'The speaker's upspeak — ending statements with a rising pitch — made her sound uncertain even about facts she knew well.' What is upspeak?", options: ["Speaking too loudly", "Ending statements with a question-like rising pitch", "Speaking too fast", "Using filler words"], answer: 1 },
+  { category: "Comprehension", question: "Read: 'His vocal variety — varying pace, pitch, and volume — kept the 500-person audience engaged for 45 minutes.' What mainly kept them engaged?", options: ["The length of the speech", "The size of the audience", "Variation in how he delivered the speech", "The topic itself"], answer: 2 },
+  { category: "Grammar", question: "Which sentence is grammatically correct?", options: ["Between you and I, this is wrong.", "Between you and me, this is wrong.", "Between you and myself, this is wrong.", "Between I and you, this is wrong."], answer: 1 },
+  { category: "Grammar", question: "Choose the correct form: 'She ___ here since 2018.'", options: ["works", "worked", "has been working", "is working"], answer: 2 },
+  { category: "Grammar", question: "Which is a split infinitive?", options: ["To speak clearly is important.", "She wanted to quickly speak.", "She spoke clearly and confidently.", "To be or not to be."], answer: 1 },
+  { category: "Grammar", question: "Choose the correct relative pronoun: 'The speaker ___ won the award was outstanding.'", options: ["which", "whom", "who", "whose"], answer: 2 },
+  { category: "Grammar", question: "Identify the correct use of 'fewer' vs 'less':", options: ["There are less people today.", "There are fewer people today.", "There is fewer people today.", "There are less persons today."], answer: 1 },
+  { category: "Grammar", question: "Which sentence uses reported speech correctly?", options: ["She said she is happy.", "She said that she was happy.", "She said that she is happy.", "She told she was happy."], answer: 1 },
+  { category: "Grammar", question: "Choose the correct modal verb: 'You ___ have told me earlier — now it's too late.'", options: ["should", "shall", "will", "can"], answer: 0 },
+  { category: "Grammar", question: "Which sentence has a misplaced modifier?", options: ["She almost drove her children to school every day.", "She drove her children to school almost every day.", "Almost every day she drove her children to school.", "She drove almost every day to school."], answer: 0 },
+  { category: "Grammar", question: "Choose the correct preposition: 'He is good ___ public speaking.'", options: ["in", "on", "at", "for"], answer: 2 },
+  { category: "Grammar", question: "Which sentence uses the correct form of the verb?", options: ["The data shows a clear trend.", "The data show a clear trend.", "Both are acceptable.", "Neither is correct."], answer: 2 },
+  { category: "Pronunciation", question: "How many syllables does 'particularly' have?", options: ["4", "5", "6", "3"], answer: 1 },
+  { category: "Pronunciation", question: "Which word has a silent 'k'?", options: ["kite", "knock", "king", "keep"], answer: 1 },
+  { category: "Pronunciation", question: "The word 'quinoa' is correctly pronounced as:", options: ["KWIN-o-a", "KEEN-wah", "kwi-NO-ah", "KEE-no-ah"], answer: 1 },
+  { category: "Pronunciation", question: "Which word is stressed on the FIRST syllable when used as a noun?", options: ["reCORD", "PREsent", "conTENT", "perMIT"], answer: 1 },
+  { category: "Pronunciation", question: "The 'th' in 'this' is:", options: ["Unvoiced", "Voiced", "Silent", "Aspirated"], answer: 1 },
+  { category: "Vocabulary", question: "What does 'circumlocution' mean?", options: ["Speaking directly and concisely", "Using many words to say something that could be said briefly", "A type of vocal exercise", "The study of speech sounds"], answer: 1 },
+  { category: "Vocabulary", question: "Choose the word that means 'able to speak fluently and coherently':", options: ["inarticulate", "taciturn", "articulate", "reticent"], answer: 2 },
+  { category: "Vocabulary", question: "What does 'rhetoric' mean?", options: ["Empty, meaningless talk", "The art of effective speaking or writing", "A type of question with no answer", "Stage fright"], answer: 1 },
+  { category: "Vocabulary", question: "Which word means 'a long, pompous speech'?", options: ["soliloquy", "harangue", "anecdote", "monologue"], answer: 1 },
+  { category: "Vocabulary", question: "What does 'prolific' mean?", options: ["Extremely brief", "Producing a large amount of work", "Unable to speak clearly", "Speaking in multiple languages"], answer: 1 }
+];
+
+// ===== QUIZ LOGIC =====
+const questionSets = [set1, set2];
+const setIndex = parseInt(sessionStorage.getItem('diagSetIndex') || '0');
+const nextIndex = (setIndex + 1) % 2;
+sessionStorage.setItem('diagSetIndex', nextIndex);
+
+const questions = questionSets[setIndex];
+let current = 0, score = 0;
 let sectionScores = { Comprehension: 0, Grammar: 0, Pronunciation: 0, Vocabulary: 0 };
 
-const BACKEND = "https://speech-ai-website-1.onrender.com";
-
-async function wakeServer() {
-  try {
-    await fetch(`${BACKEND}/`, { method: "GET" });
-  } catch(e) {}
-}
-
-async function fetchWithRetry(url, options, retries = 3) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 60000);
-      const response = await fetch(url, { ...options, signal: controller.signal });
-      clearTimeout(timeout);
-      return response;
-    } catch(e) {
-      if (i === retries - 1) throw e;
-      await new Promise(r => setTimeout(r, 3000));
-    }
-  }
-}
-
-async function startQuiz() {
-  current = 0; score = 0;
-  sectionScores = { Comprehension: 0, Grammar: 0, Pronunciation: 0, Vocabulary: 0 };
-  document.getElementById('resultCard').style.display = 'none';
-  document.getElementById('quizCard').style.display = 'none';
-  document.getElementById('loadingCard').style.display = 'block';
-
-  // Step 1 — wake server
-  document.getElementById('loadingCard').innerHTML = `
-    <div class="spinner"></div>
-    <p>☕ Waking up server...</p>
-    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">Free servers sleep after inactivity. Please wait!</p>
-  `;
-  await wakeServer();
-
-  // Step 2 — generate questions
-  document.getElementById('loadingCard').innerHTML = `
-    <div class="spinner"></div>
-    <p>🧠 AI is generating your questions...</p>
-    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">This usually takes 10-20 seconds</p>
-  `;
-
-  try {
-    const response = await fetchWithRetry(`${BACKEND}/generate-questions`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" }
-    });
-
-    const data = await response.json();
-
-    if (data.error || !data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
-      throw new Error(data.error || "Empty questions");
-    }
-
-    questions = data.questions;
-    document.getElementById('loadingCard').style.display = 'none';
-    document.getElementById('quizCard').style.display = 'block';
-    loadQuestion();
-
-  } catch (err) {
-    console.error("Quiz error:", err);
-    document.getElementById('loadingCard').innerHTML = `
-      <p style="font-size:2rem;margin-bottom:12px;">⚠️</p>
-      <p style="color:#ef4444;font-weight:700;margin-bottom:8px;">Failed to load questions</p>
-      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;">The server may still be waking up. Please wait a moment and try again.</p>
-      <button class="btn-primary" onclick="startQuiz()" style="display:inline-flex;margin:0 auto;">🔄 Try Again</button>
-    `;
-  }
-}
+document.getElementById('setBadge').textContent = `Set ${setIndex + 1} of 2`;
 
 function getCatClass(category) {
   const map = { "Grammar": "cat-grammar", "Vocabulary": "cat-vocabulary", "Pronunciation": "cat-pronunciation", "Comprehension": "cat-comprehension" };
@@ -284,7 +271,7 @@ if (localStorage.getItem('dark') === 'true') {
   document.getElementById('darkToggle').textContent = '☀️';
 }
 
-const container = document.getElementById('particles');
+const particleContainer = document.getElementById('particles');
 for (let i = 0; i < 18; i++) {
   const p = document.createElement('div');
   p.className = 'particle';
@@ -293,10 +280,10 @@ for (let i = 0; i < 18; i++) {
   p.style.animationDuration = (6 + Math.random() * 8) + 's';
   p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
   p.style.opacity = 0.15 + Math.random() * 0.25;
-  container.appendChild(p);
+  particleContainer.appendChild(p);
 }
 
-startQuiz();
+loadQuestion();
 </script>
 <script type="module" src="login-widget.js"></script>
 </body>
