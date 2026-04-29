@@ -286,5 +286,94 @@ for (let i = 0; i < 18; i++) {
 loadQuestion();
 </script>
 <script type="module" src="login-widget.js"></script>
+<!-- Feedback FAB -->
+<button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
+
+<!-- Feedback Popup -->
+<div class="feedback-overlay" id="feedbackOverlay" onclick="closeFeedbackOutside(event)">
+  <div class="feedback-popup">
+    <button class="popup-close" onclick="closeFeedback()">✕</button>
+
+    <div id="popupFormState">
+      <div class="popup-title">Quick Feedback 💬</div>
+      <div class="popup-sub">Takes 30 seconds. Helps us improve!</div>
+
+      <div style="font-size:0.8rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Who are you?</div>
+      <div class="popup-role-grid">
+        <button class="popup-role-btn" onclick="selectRole(this, 'Student')">🎓<span>Student</span></button>
+        <button class="popup-role-btn" onclick="selectRole(this, 'Professional')">💼<span>Professional</span></button>
+        <button class="popup-role-btn" onclick="selectRole(this, 'Teacher')">👨‍🏫<span>Teacher</span></button>
+        <button class="popup-role-btn" onclick="selectRole(this, 'Other')">🙋<span>Other</span></button>
+      </div>
+
+      <div style="font-size:0.8rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Rate your experience</div>
+      <div class="popup-stars">
+        <button class="popup-star" onclick="setPopupRating(1)" id="ps1">⭐</button>
+        <button class="popup-star" onclick="setPopupRating(2)" id="ps2">⭐</button>
+        <button class="popup-star" onclick="setPopupRating(3)" id="ps3">⭐</button>
+        <button class="popup-star" onclick="setPopupRating(4)" id="ps4">⭐</button>
+        <button class="popup-star" onclick="setPopupRating(5)" id="ps5">⭐</button>
+      </div>
+
+      <div style="font-size:0.8rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Any suggestions?</div>
+      <textarea class="popup-textarea" id="popupSuggestion" placeholder="What can we improve?"></textarea>
+
+      <div class="popup-footer">
+        <button class="btn-primary" onclick="submitPopupFeedback()" style="flex:1;justify-content:center;padding:12px;">Submit 🚀</button>
+        <a href="feedback.html" class="popup-full-link" target="_blank">Full form →</a>
+      </div>
+    </div>
+
+    <div class="popup-success" id="popupSuccess">
+      <div class="ps-icon">🎉</div>
+      <h3 style="margin-bottom:8px;">Thank you!</h3>
+      <p>Your feedback helps us improve.</p>
+      <button class="btn-secondary" onclick="closeFeedback()" style="margin-top:16px;">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let popupRole = '';
+  let popupRating = 0;
+
+  function openFeedback() {
+    document.getElementById('feedbackOverlay').classList.add('show');
+  }
+  function closeFeedback() {
+    document.getElementById('feedbackOverlay').classList.remove('show');
+  }
+  function closeFeedbackOutside(e) {
+    if (e.target === document.getElementById('feedbackOverlay')) closeFeedback();
+  }
+  function selectRole(btn, role) {
+    popupRole = role;
+    document.querySelectorAll('.popup-role-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+  function setPopupRating(val) {
+    popupRating = val;
+    for (let i = 1; i <= 5; i++) {
+      const s = document.getElementById(`ps${i}`);
+      if (i <= val) s.classList.add('active');
+      else s.classList.remove('active');
+    }
+  }
+  function submitPopupFeedback() {
+    if (!popupRole) { alert('Please select who you are!'); return; }
+    if (!popupRating) { alert('Please give a rating!'); return; }
+    const suggestion = document.getElementById('popupSuggestion').value.trim();
+    const feedback = {
+      role: popupRole, rating: popupRating,
+      suggestion, date: new Date().toLocaleDateString('en-IN'),
+      source: 'popup'
+    };
+    const all = JSON.parse(localStorage.getItem('feedbackList') || '[]');
+    all.push(feedback);
+    localStorage.setItem('feedbackList', JSON.stringify(all));
+    document.getElementById('popupFormState').style.display = 'none';
+    document.getElementById('popupSuccess').style.display = 'block';
+  }
+</script>
 </body>
 </html>

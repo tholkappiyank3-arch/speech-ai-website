@@ -415,4 +415,104 @@ body.dark .dark-toggle {
   .card { padding: 18px; }
   .record-card { padding: 24px 16px; }
   .timer-display { font-size: 1.8rem; }
+  /* ===== FEEDBACK BUTTON ===== */
+.feedback-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9998;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: 99px;
+  padding: 12px 20px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255,75,110,0.35);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+.feedback-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,75,110,0.45); }
+body.dark .feedback-fab { box-shadow: 0 8px 24px rgba(124,131,255,0.35); }
+
+/* ===== FEEDBACK POPUP ===== */
+.feedback-overlay {
+  position: fixed; inset: 0; z-index: 9997;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.feedback-overlay.show { display: flex; animation: fadeIn 0.2s ease both; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.feedback-popup {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  padding: 28px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: slideUp 0.3s ease both;
+  position: relative;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+.popup-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: rgba(255,75,110,0.08);
+  border: none; border-radius: 10px;
+  width: 32px; height: 32px;
+  font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease; color: var(--text-muted);
+}
+.popup-close:hover { background: rgba(255,75,110,0.15); }
+
+.popup-title { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.popup-sub { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 22px; }
+
+.popup-role-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 18px; }
+.popup-role-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 14px 10px; border-radius: 14px;
+  border: 2px solid var(--border); background: rgba(255,255,255,0.5);
+  cursor: pointer; font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem; font-weight: 700; color: var(--text);
+  transition: all 0.2s ease;
+}
+.popup-role-btn:hover { border-color: var(--primary); background: rgba(255,75,110,0.06); }
+.popup-role-btn.selected { border-color: var(--primary); background: rgba(255,75,110,0.09); color: var(--primary); }
+body.dark .popup-role-btn { background: rgba(22,22,31,0.8); }
+body.dark .popup-role-btn.selected { background: rgba(124,131,255,0.1); border-color: #7c83ff; color: #7c83ff; }
+
+.popup-stars { display: flex; gap: 8px; margin-bottom: 18px; }
+.popup-star { background: none; border: none; font-size: 1.6rem; cursor: pointer; transition: transform 0.15s; filter: grayscale(1); opacity: 0.4; padding: 2px; }
+.popup-star.active { filter: grayscale(0); opacity: 1; transform: scale(1.2); }
+
+.popup-textarea {
+  width: 100%; padding: 12px 14px; border-radius: 12px;
+  border: 1.5px solid var(--border); background: var(--card-bg);
+  font-family: 'Outfit', sans-serif; font-size: 0.92rem;
+  color: var(--text); resize: none; min-height: 80px;
+  outline: none; margin-bottom: 16px; transition: all 0.2s ease;
+}
+.popup-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,75,110,0.1); }
+body.dark .popup-textarea { background: rgba(22,22,31,0.8); border-color: rgba(124,131,255,0.2); color: #f0f0ff; }
+
+.popup-footer { display: flex; gap: 10px; align-items: center; }
+.popup-full-link { font-size: 0.82rem; font-weight: 700; color: var(--primary); text-decoration: none; white-space: nowrap; }
+.popup-full-link:hover { text-decoration: underline; }
+
+.popup-success { text-align: center; padding: 20px 0; display: none; animation: fadeUp 0.4s ease both; }
+.popup-success .ps-icon { font-size: 3rem; margin-bottom: 12px; }
+.popup-success p { color: var(--text-muted); font-size: 0.95rem; }
 }
