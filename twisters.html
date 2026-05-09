@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Eloquence — Tongue Twisters</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .difficulty-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .diff-tab {
+      padding: 8px 20px; border-radius: 99px; border: 2px solid var(--border);
+      background: var(--card-bg); font-family: 'Outfit', sans-serif;
+      font-size: 14px; font-weight: 700; color: var(--text-muted);
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .diff-tab:hover { border-color: var(--primary); color: var(--primary); }
+    .diff-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+    .twister-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      padding: 28px;
+      margin-bottom: 16px;
+      transition: all 0.25s ease;
+      animation: fadeUp 0.5s ease both;
+    }
+    .twister-card:hover { box-shadow: 0 10px 36px rgba(255,75,110,0.1); transform: translateY(-2px); }
+
+    .twister-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+    .twister-meta { display: flex; align-items: center; gap: 10px; }
+    .diff-badge { font-size: 0.72rem; font-weight: 800; padding: 4px 12px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.8px; }
+    .diff-easy { background: rgba(34,197,94,0.12); color: #16a34a; border: 1px solid rgba(34,197,94,0.2); }
+    .diff-medium { background: rgba(251,146,60,0.12); color: #ea580c; border: 1px solid rgba(251,146,60,0.2); }
+    .diff-hard { background: rgba(239,68,68,0.12); color: #dc2626; border: 1px solid rgba(239,68,68,0.2); }
+    .focus-badge { font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 99px; background: rgba(255,75,110,0.08); color: var(--primary); border: 1px solid rgba(255,75,110,0.15); }
+
+    .twister-text {
+      font-size: 1.15rem; font-weight: 700; color: var(--text);
+      line-height: 1.7; margin-bottom: 16px;
+      padding: 16px; border-radius: 14px;
+      background: rgba(255,75,110,0.04);
+      border: 1.5px dashed rgba(255,75,110,0.2);
+    }
+    body.dark .twister-text { background: rgba(124,131,255,0.06); border-color: rgba(124,131,255,0.2); color: #f0f0ff; }
+
+    .twister-tip { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px; line-height: 1.6; }
+
+    .speed-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .speed-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+    .speed-btn {
+      padding: 6px 14px; border-radius: 99px; border: 1.5px solid var(--border);
+      background: var(--card-bg); font-family: 'Outfit', sans-serif;
+      font-size: 13px; font-weight: 700; color: var(--text-muted);
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .speed-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .speed-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+    .twister-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .speak-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 20px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white; border: none; font-family: 'Outfit', sans-serif;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(255,75,110,0.3);
+    }
+    .speak-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(255,75,110,0.4); }
+    .speak-btn.speaking { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 4px 14px rgba(34,197,94,0.3); }
+
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 20px; border-radius: 12px;
+      background: rgba(255,75,110,0.07); color: var(--primary);
+      border: 1.5px solid rgba(255,75,110,0.2);
+      font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .copy-btn:hover { background: rgba(255,75,110,0.13); transform: translateY(-1px); }
+
+    .counter-row { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .counter-item { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
+    .counter-item span { color: var(--primary); font-size: 1rem; }
+
+    .section-title { font-size: 1.1rem; font-weight: 800; color: var(--text); margin: 28px 0 16px; display: flex; align-items: center; gap: 8px; }
+
+    .stats-bar { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    .stat-item { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 16px; padding: 14px 20px; flex: 1; min-width: 100px; text-align: center; }
+    .stat-num { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 900; color: var(--primary); }
+    .stat-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    body.dark .twister-card { background: #1a1a1a; }
+    body.dark .diff-tab { background: #1a1a1a; }
+    body.dark .speed-btn { background: #1a1a1a; }
+    body.dark .stat-item { background: #1a1a1a; }
+    body.dark .copy-btn { background: rgba(124,131,255,0.08); border-color: rgba(124,131,255,0.2); }
+    body.dark .copy-btn:hover { background: rgba(124,131,255,0.15); }
+  </style>
+</head>
+<body>
+
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+<div class="particles" id="particles"></div>
+
+<div class="container">
+  <nav>
+    <div class="logo">🎤 My Eloquence</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="diagnostic.html">Diagnostic</a>
+      <a href="learn.html">Learn</a>
+      <a href="exercise.html">Practice</a>
+      <a href="history.html">History</a>
+      <a href="twisters.html" class="active">Twisters</a>
+      <button class="dark-toggle" id="darkToggle" onclick="toggleDark()">🌙</button>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="badge">👅 Pronunciation Practice</div>
+    <h1>Tongue <span class="highlight">Twisters</span></h1>
+    <p class="subtitle">Train your mouth, sharpen your speech. Practice daily for clearer pronunciation and faster delivery.</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num" id="statPracticed">0</div>
+      <div class="stat-label">Practiced</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statStreak">0</div>
+      <div class="stat-label">Day Streak</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">30</div>
+      <div class="stat-label">Total</div>
+    </div>
+  </div>
+
+  <!-- Difficulty Tabs -->
+  <div class="difficulty-tabs">
+    <button class="diff-tab active" onclick="filterTwisters('all', this)">All</button>
+    <button class="diff-tab" onclick="filterTwisters('easy', this)">🟢 Easy</button>
+    <button class="diff-tab" onclick="filterTwisters('medium', this)">🟠 Medium</button>
+    <button class="diff-tab" onclick="filterTwisters('hard', this)">🔴 Hard</button>
+  </div>
+
+  <!-- Twisters Container -->
+  <div id="twistersContainer"></div>
+</div>
+
+<script>
+const twisters = [
+  // EASY
+  { id: 1, difficulty: 'easy', focus: 'S & SH sounds', text: 'She sells seashells by the seashore.', tip: '💡 Focus on the sharp "s" vs the softer "sh" sound. Go slowly first, then speed up.' },
+  { id: 2, difficulty: 'easy', focus: 'P sounds', text: 'Peter Piper picked a peck of pickled peppers.', tip: '💡 The "p" sound requires a burst of air. Feel your lips pop on each P.' },
+  { id: 3, difficulty: 'easy', focus: 'B sounds', text: 'Betty Botter bought some butter, but she said the butter\'s bitter.', tip: '💡 The "b" sound is voiced — feel your throat vibrate as you say each B.' },
+  { id: 4, difficulty: 'easy', focus: 'W sounds', text: 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?', tip: '💡 Round your lips for every "w" and "wh" sound.' },
+  { id: 5, difficulty: 'easy', focus: 'F & V sounds', text: 'Fresh French fried fish, fresh French fried fish, fresh French fried fish.', tip: '💡 Bite your lower lip gently for "f" sounds. Feel the airflow difference.' },
+  { id: 6, difficulty: 'easy', focus: 'R sounds', text: 'Red lorry, yellow lorry, red lorry, yellow lorry.', tip: '💡 Curl your tongue slightly back for clear "r" sounds.' },
+  { id: 7, difficulty: 'easy', focus: 'TH sounds', text: 'The thirty-three thieves thought that they thrilled the throne throughout Thursday.', tip: '💡 Put your tongue between your teeth for the "th" sound.' },
+  { id: 8, difficulty: 'easy', focus: 'C & K sounds', text: 'Can you can a can as a canner can can a can?', tip: '💡 The "c/k" sound starts at the back of your throat. Make it crisp and clear.' },
+  { id: 9, difficulty: 'easy', focus: 'L sounds', text: 'Lesser leather never weathered wetter weather better.', tip: '💡 Touch your tongue to the ridge behind your upper teeth for a clear "l".' },
+  { id: 10, difficulty: 'easy', focus: 'CH sounds', text: 'Chester cheetah chews chunks of chewy cheese.', tip: '💡 The "ch" sound combines a t and sh sound together. Keep it sharp.' },
+
+  // MEDIUM
+  { id: 11, difficulty: 'medium', focus: 'S, SH, W sounds', text: 'How can a clam cram in a clean cream can?', tip: '💡 Alternate between the "cl" cluster and the "cr" cluster. Keep your consonants clear.' },
+  { id: 12, difficulty: 'medium', focus: 'B & V sounds', text: 'Bobby Brown blows big blue bubbles but Bobby Brown\'s big blue bubbles burst.', tip: '💡 Switch between b (lip pop) and no sound. Feel the rhythm.' },
+  { id: 13, difficulty: 'medium', focus: 'S & Z sounds', text: 'Fuzzy Wuzzy was a bear. Fuzzy Wuzzy had no hair. Fuzzy Wuzzy wasn\'t fuzzy, was he?', tip: '💡 The z sound is the voiced version of s. Throat vibrates for z.' },
+  { id: 14, difficulty: 'medium', focus: 'T sounds', text: 'Toy boat, toy boat, toy boat. Try to say it ten times fast!', tip: '💡 The tongue must tap the roof of your mouth crisply for every "t".' },
+  { id: 15, difficulty: 'medium', focus: 'R & L sounds', text: 'A really leery Larry rolls rarely around the really rural road.', tip: '💡 The r vs l distinction is one of the most important in English clarity.' },
+  { id: 16, difficulty: 'medium', focus: 'PL & FL sounds', text: 'Flee from fog to fight flu fast. Flee from fog to fight flu fast.', tip: '💡 The fl blend needs your lips to come together then quickly part for the l.' },
+  { id: 17, difficulty: 'medium', focus: 'TR sounds', text: 'The great Greek grape growers grow great Greek grapes.', tip: '💡 The gr blend requires your tongue to pull back for g then forward for r.' },
+  { id: 18, difficulty: 'medium', focus: 'W & R sounds', text: 'Whether the weather is warm, whether the weather is hot, we have to put up with the weather, whether we like it or not.', tip: '💡 A classic! Focus on the wh/w sounds at the start of each phrase.' },
+  { id: 19, difficulty: 'medium', focus: 'N & M sounds', text: 'Nine nice night nurses nursing nicely.', tip: '💡 Nasal sounds like n and m resonate through your nose. Feel the vibration.' },
+  { id: 20, difficulty: 'medium', focus: 'S & P sounds', text: 'Snap, crackle, pop. Snap, crackle, pop. Say it six times super fast!', tip: '💡 Each word starts with a different consonant cluster. Keep each one crisp.' },
+
+  // HARD
+  { id: 21, difficulty: 'hard', focus: 'Mixed consonants', text: 'The sixth sick sheik\'s sixth sheep\'s sick. Say it three times fast.', tip: '💡 Considered the hardest tongue twister in English. Go very slowly at first.' },
+  { id: 22, difficulty: 'hard', focus: 'SH & S sounds', text: 'She sees cheese. She sees cheese. She sees cheese. She sees cheese.', tip: '💡 Alternate sharply between the sh and s sounds without blending them.' },
+  { id: 23, difficulty: 'hard', focus: 'SP & ST sounds', text: 'Spinning spiders spin spectacular spiral spider webs, spinning spectacular spiral webs.', tip: '💡 The sp and st blends need quick tongue movement. Don\'t let them blur.' },
+  { id: 24, difficulty: 'hard', focus: 'Mixed vowels', text: 'If a dog chews shoes, whose shoes does he choose?', tip: '💡 Focus on the oo vowel sound — it needs rounded lips pushed slightly forward.' },
+  { id: 25, difficulty: 'hard', focus: 'R & W sounds', text: 'Round and round the rugged rock the ragged rascal ran.', tip: '💡 The r needs your tongue slightly curled back. Keep it consistent through the whole sentence.' },
+  { id: 26, difficulty: 'hard', focus: 'PH & F sounds', text: 'Phones, phones,phones — five fat phones fried, five fat phones fried, five fat phones frying.', tip: '💡 The f sound should be sharp and short. Don\'t let it blur into a v.' },
+  { id: 27, difficulty: 'hard', focus: 'DR & GR sounds', text: 'Drops of dew drip from dreary drains dramatically during dreary droughts.', tip: '💡 The dr blend is one of the trickiest — keep the d and r distinct.' },
+  { id: 28, difficulty: 'hard', focus: 'STR sounds', text: 'Strange strategic steps strengthen speech, strange strategic steps strengthen speech.', tip: '💡 The str cluster needs three sounds: s + t + r. Don\'t collapse them.' },
+  { id: 29, difficulty: 'hard', focus: 'Mixed clusters', text: 'Brisk brave brigadiers brandished broad bright blades, blunderbusses, and bludgeons.', tip: '💡 Each word starts with a br or bl blend. Keep the b crisp and add the liquid consonant.' },
+  { id: 30, difficulty: 'hard', focus: 'S & SH sounds', text: 'I slit the sheet, the sheet I slit, and on the slitted sheet I sit.', tip: '💡 The sl cluster combined with sh sounds makes this a real challenge. Slow down!' }
+];
+
+let practiced = JSON.parse(localStorage.getItem('twisters_practiced') || '[]');
+let currentFilter = 'all';
+let speeds = {};
+
+function loadStats() {
+  document.getElementById('statPracticed').textContent = practiced.length;
+  const lastDate = localStorage.getItem('twisters_lastDate');
+  const today = new Date().toISOString().split('T')[0];
+  let streak = parseInt(localStorage.getItem('twisters_streak') || '0');
+  if (lastDate === today) {
+    document.getElementById('statStreak').textContent = streak;
+  } else {
+    document.getElementById('statStreak').textContent = streak;
+  }
+}
+
+function filterTwisters(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.diff-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderTwisters();
+}
+
+function renderTwisters() {
+  const container = document.getElementById('twistersContainer');
+  container.innerHTML = '';
+  const filtered = currentFilter === 'all' ? twisters : twisters.filter(t => t.difficulty === currentFilter);
+
+  filtered.forEach((t, idx) => {
+    const isPracticed = practiced.includes(t.id);
+    const speed = speeds[t.id] || 'normal';
+    const card = document.createElement('div');
+    card.className = 'twister-card';
+    card.id = `card-${t.id}`;
+    card.style.animationDelay = `${idx * 0.05}s`;
+    card.innerHTML = `
+      <div class="twister-header">
+        <div class="twister-meta">
+          <span class="diff-badge diff-${t.difficulty}">${t.difficulty}</span>
+          <span class="focus-badge">🎯 ${t.focus}</span>
+        </div>
+        ${isPracticed ? '<span style="font-size:0.8rem;font-weight:700;color:#22c55e;">✓ Practiced</span>' : ''}
+      </div>
+      <div class="twister-text" id="text-${t.id}">${t.text}</div>
+      <div class="twister-tip">${t.tip}</div>
+      <div class="speed-controls">
+        <span class="speed-label">Speed:</span>
+        <button class="speed-btn ${speed === 'slow' ? 'active' : ''}" onclick="setSpeed(${t.id}, 'slow', this)">🐢 Slow</button>
+        <button class="speed-btn ${speed === 'normal' ? 'active' : ''}" onclick="setSpeed(${t.id}, 'normal', this)">🚶 Normal</button>
+        <button class="speed-btn ${speed === 'fast' ? 'active' : ''}" onclick="setSpeed(${t.id}, 'fast', this)">🐇 Fast</button>
+      </div>
+      <div class="twister-actions">
+        <button class="speak-btn" id="speakBtn-${t.id}" onclick="speakTwister(${t.id})">🔊 Listen</button>
+        <button class="copy-btn" onclick="copyTwister(${t.id})">📋 Copy</button>
+        <button class="speak-btn" style="background:linear-gradient(135deg,#6366f1,#4f46e5);box-shadow:0 4px 14px rgba(99,102,241,0.3);" onclick="markPracticed(${t.id})">
+          ${isPracticed ? '✓ Done' : '🎯 Mark Practiced'}
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function setSpeed(id, speed, btn) {
+  speeds[id] = speed;
+  const card = document.getElementById(`card-${id}`);
+  card.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function speakTwister(id) {
+  const twister = twisters.find(t => t.id === id);
+  const btn = document.getElementById(`speakBtn-${id}`);
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(twister.text);
+  utterance.lang = 'en-US';
+  const speed = speeds[id] || 'normal';
+  utterance.rate = speed === 'slow' ? 0.6 : speed === 'fast' ? 1.3 : 0.9;
+  utterance.pitch = 1;
+  btn.classList.add('speaking');
+  btn.textContent = '🔊 Speaking...';
+  utterance.onend = () => {
+    btn.classList.remove('speaking');
+    btn.textContent = '🔊 Listen';
+  };
+  window.speechSynthesis.speak(utterance);
+}
+
+function copyTwister(id) {
+  const twister = twisters.find(t => t.id === id);
+  navigator.clipboard.writeText(twister.text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy', 1500);
+  });
+}
+
+function markPracticed(id) {
+  if (!practiced.includes(id)) {
+    practiced.push(id);
+    localStorage.setItem('twisters_practiced', JSON.stringify(practiced));
+    const today = new Date().toISOString().split('T')[0];
+    const lastDate = localStorage.getItem('twisters_lastDate');
+    let streak = parseInt(localStorage.getItem('twisters_streak') || '0');
+    if (lastDate !== today) {
+      streak++;
+      localStorage.setItem('twisters_streak', streak);
+      localStorage.setItem('twisters_lastDate', today);
+    }
+    loadStats();
+    renderTwisters();
+  }
+}
+
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  const btn = document.getElementById('darkToggle');
+  btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  localStorage.setItem('dark', document.body.classList.contains('dark'));
+}
+if (localStorage.getItem('dark') === 'true') {
+  document.body.classList.add('dark');
+  document.getElementById('darkToggle').textContent = '☀️';
+}
+
+const particleContainer = document.getElementById('particles');
+for (let i = 0; i < 18; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.animationDelay = Math.random() * 8 + 's';
+  p.style.animationDuration = (6 + Math.random() * 8) + 's';
+  p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
+  p.style.opacity = 0.15 + Math.random() * 0.25;
+  particleContainer.appendChild(p);
+}
+
+loadStats();
+renderTwisters();
+</script>
+<script type="module" src="login-widget.js"></script>
+</body>
+</html>
