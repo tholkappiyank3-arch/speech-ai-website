@@ -6,44 +6,6 @@
   <title>My Eloquence — Feedback</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <style>
-    .feedback-form { max-width: 600px; margin: 0 auto; }
-    .form-group { margin-bottom: 22px; }
-    .form-label { display: block; font-size: 0.8rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-    .form-textarea, .form-select {
-      width: 100%; padding: 13px 16px; border-radius: 14px;
-      border: 1.5px solid var(--border); background: var(--card-bg);
-      font-family: 'Outfit', sans-serif; font-size: 0.97rem; font-weight: 500;
-      color: var(--text); transition: all 0.2s ease; outline: none;
-    }
-    .form-textarea:focus, .form-select:focus {
-      border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,75,110,0.1);
-    }
-    .form-textarea { min-height: 100px; resize: vertical; }
-    .role-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .role-option { position: relative; }
-    .role-option input { position: absolute; opacity: 0; width: 0; height: 0; }
-    .role-label {
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-      padding: 18px 12px; border-radius: 16px; border: 2px solid var(--border);
-      background: var(--card-bg); cursor: pointer; transition: all 0.2s ease;
-      text-align: center;
-    }
-    .role-label:hover { border-color: var(--primary); background: rgba(255,75,110,0.05); transform: translateY(-2px); }
-    .role-option input:checked + .role-label { border-color: var(--primary); background: rgba(255,75,110,0.08); }
-    .role-icon { font-size: 2rem; }
-    .role-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
-    .rating-row { display: flex; gap: 10px; }
-    .star-btn { background: none; border: none; font-size: 2rem; cursor: pointer; transition: transform 0.15s ease; padding: 4px; filter: grayscale(1); opacity: 0.35; }
-    .star-btn.active { filter: grayscale(0); opacity: 1; transform: scale(1.2); }
-    .success-state { text-align: center; padding: 50px 20px; display: none; animation: fadeUp 0.5s ease both; }
-    .success-state .big-icon { font-size: 4rem; margin-bottom: 16px; }
-    body.dark .form-textarea, body.dark .form-select { background: rgba(22,22,31,0.8); border-color: rgba(124,131,255,0.2); color: #f0f0ff; }
-    body.dark .role-label { background: rgba(22,22,31,0.8); }
-    body.dark .role-option input:checked + .role-label { background: rgba(124,131,255,0.1); border-color: #7c83ff; }
-    body.dark .role-name { color: #f0f0ff; }
-    @media (max-width: 500px) { .role-grid { grid-template-columns: repeat(2, 1fr); } }
-  </style>
 </head>
 <body>
 
@@ -73,163 +35,22 @@
     <p class="subtitle">Help us improve My Eloquence for everyone. Takes less than 2 minutes!</p>
   </div>
 
-  <div class="card">
-    <div id="formState">
-      <div class="feedback-form">
-
-        <!-- Who are you -->
-        <div class="form-group">
-          <label class="form-label">Who are you?</label>
-          <div class="role-grid">
-            <div class="role-option">
-              <input type="radio" name="role" id="role-student" value="Student">
-              <label class="role-label" for="role-student">
-                <span class="role-icon">🎓</span>
-                <span class="role-name">Student</span>
-              </label>
-            </div>
-            <div class="role-option">
-              <input type="radio" name="role" id="role-professional" value="Professional">
-              <label class="role-label" for="role-professional">
-                <span class="role-icon">💼</span>
-                <span class="role-name">Professional</span>
-              </label>
-            </div>
-            <div class="role-option">
-              <input type="radio" name="role" id="role-teacher" value="Teacher / Trainer">
-              <label class="role-label" for="role-teacher">
-                <span class="role-icon">👨‍🏫</span>
-                <span class="role-name">Teacher / Trainer</span>
-              </label>
-            </div>
-            <div class="role-option">
-              <input type="radio" name="role" id="role-other" value="Other">
-              <label class="role-label" for="role-other">
-                <span class="role-icon">🙋</span>
-                <span class="role-name">Other</span>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <!-- Overall rating -->
-        <div class="form-group">
-          <label class="form-label">Overall Rating</label>
-          <div class="rating-row">
-            <button class="star-btn" onclick="setRating(1)" id="star1">⭐</button>
-            <button class="star-btn" onclick="setRating(2)" id="star2">⭐</button>
-            <button class="star-btn" onclick="setRating(3)" id="star3">⭐</button>
-            <button class="star-btn" onclick="setRating(4)" id="star4">⭐</button>
-            <button class="star-btn" onclick="setRating(5)" id="star5">⭐</button>
-          </div>
-        </div>
-
-        <!-- Most used feature -->
-        <div class="form-group">
-          <label class="form-label" for="feature">Which feature do you use most?</label>
-          <select class="form-select" id="feature">
-            <option value="">Select a feature...</option>
-            <option value="Practice (Speech Recording)">Practice — Speech Recording</option>
-            <option value="Diagnostic Test">Diagnostic Test</option>
-            <option value="Daily Learn Streak">Daily Learn Streak</option>
-            <option value="Practice History">Practice History</option>
-            <option value="All equally">All equally</option>
-          </select>
-        </div>
-
-        <!-- What they liked -->
-        <div class="form-group">
-          <label class="form-label" for="liked">What do you like most?</label>
-          <textarea class="form-textarea" id="liked" placeholder="e.g. The AI feedback is really helpful and instant..."></textarea>
-        </div>
-
-        <!-- What to improve -->
-        <div class="form-group">
-          <label class="form-label" for="improve">What can we improve?</label>
-          <textarea class="form-textarea" id="improve" placeholder="e.g. I wish the diagnostic loaded faster..."></textarea>
-        </div>
-
-        <!-- Would recommend -->
-        <div class="form-group">
-          <label class="form-label">Would you recommend My Eloquence?</label>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;">
-            <div class="role-option" style="flex:1;min-width:120px;">
-              <input type="radio" name="recommend" id="rec-yes" value="Yes">
-              <label class="role-label" for="rec-yes">
-                <span class="role-icon">👍</span>
-                <span class="role-name">Yes, definitely!</span>
-              </label>
-            </div>
-            <div class="role-option" style="flex:1;min-width:120px;">
-              <input type="radio" name="recommend" id="rec-maybe" value="Maybe">
-              <label class="role-label" for="rec-maybe">
-                <span class="role-icon">🤔</span>
-                <span class="role-name">Maybe</span>
-              </label>
-            </div>
-            <div class="role-option" style="flex:1;min-width:120px;">
-              <input type="radio" name="recommend" id="rec-no" value="No">
-              <label class="role-label" for="rec-no">
-                <span class="role-icon">👎</span>
-                <span class="role-name">Not yet</span>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <button class="btn-primary" onclick="submitFeedback()" style="width:100%;justify-content:center;margin-top:8px;">
-          Submit Feedback 🚀
-        </button>
-      </div>
-    </div>
-
-    <!-- Success -->
-    <div class="success-state" id="successState">
-      <div class="big-icon">🎉</div>
-      <h2 style="margin-bottom:12px;">Thank you for your feedback!</h2>
-      <p style="color:var(--text-muted);margin-bottom:28px;">Your response helps us make My Eloquence better for everyone.</p>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <a href="index.html"><button class="btn-primary">🏠 Back to Home</button></a>
-        <a href="exercise.html"><button class="btn-secondary">🎤 Go Practice</button></a>
-      </div>
-    </div>
+  <div class="card" style="padding:0;overflow:hidden;border-radius:22px;">
+    <iframe
+      src="https://docs.google.com/forms/d/e/1FAIpQLScbK5PWqxs2k3b_I1DHtoa2oBXTuCiqCJdWPpH6LXqgYwcQIQ/viewform?embedded=true"
+      width="100%"
+      height="900"
+      frameborder="0"
+      marginheight="0"
+      marginwidth="0"
+      style="border:none;display:block;">
+      Loading...
+    </iframe>
   </div>
+
 </div>
 
 <script>
-  let rating = 0;
-
-  function setRating(val) {
-    rating = val;
-    for (let i = 1; i <= 5; i++) {
-      const star = document.getElementById(`star${i}`);
-      if (i <= val) star.classList.add('active');
-      else star.classList.remove('active');
-    }
-  }
-
-  function submitFeedback() {
-    const role = document.querySelector('input[name="role"]:checked')?.value;
-    const recommend = document.querySelector('input[name="recommend"]:checked')?.value;
-    const feature = document.getElementById('feature').value;
-    const liked = document.getElementById('liked').value.trim();
-    const improve = document.getElementById('improve').value.trim();
-
-    if (!role) { alert('Please select who you are!'); return; }
-    if (!rating) { alert('Please give a rating!'); return; }
-
-    const feedback = {
-      role, rating, feature, liked, improve, recommend,
-      date: new Date().toLocaleDateString('en-IN')
-    };
-    const all = JSON.parse(localStorage.getItem('feedbackList') || '[]');
-    all.push(feedback);
-    localStorage.setItem('feedbackList', JSON.stringify(all));
-
-    document.getElementById('formState').style.display = 'none';
-    document.getElementById('successState').style.display = 'block';
-  }
-
   function toggleDark() {
     document.body.classList.toggle('dark');
     const btn = document.getElementById('darkToggle');
@@ -255,4 +76,4 @@
 </script>
 <script type="module" src="login-widget.js"></script>
 </body>
-</html>
+</html><!--  -->
