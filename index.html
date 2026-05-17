@@ -70,7 +70,7 @@
 </div>
 
 <script>
-  const container = document.getElementById('particles');
+  const particleEl = document.getElementById('particles');
   for (let i = 0; i < 18; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
@@ -79,7 +79,7 @@
     p.style.animationDuration = (6 + Math.random() * 8) + 's';
     p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
     p.style.opacity = 0.15 + Math.random() * 0.25;
-    container.appendChild(p);
+    particleEl.appendChild(p);
   }
 
   function toggleDark() {

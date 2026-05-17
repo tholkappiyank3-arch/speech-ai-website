@@ -129,7 +129,6 @@
 </div>
 
 <script>
-// ===== QUESTION SET 1 =====
 const set1 = [
   { category: "Comprehension", question: "Read: 'The speaker paused dramatically before revealing the answer.' What effect does the pause create?", options: ["It shows the speaker forgot the answer", "It builds suspense and emphasizes the reveal", "It indicates nervousness", "It gives the audience time to leave"], answer: 1 },
   { category: "Comprehension", question: "Read: 'Her monotone delivery put the audience to sleep despite her brilliant content.' What is the main issue?", options: ["The content was poor", "The delivery lacked vocal variety", "She spoke too fast", "She used too many filler words"], answer: 1 },
@@ -158,7 +157,6 @@ const set1 = [
   { category: "Vocabulary", question: "What does 'extemporaneous' mean in the context of speaking?", options: ["Extremely long", "Spoken without preparation", "Very emotional", "Using complex vocabulary"], answer: 1 }
 ];
 
-// ===== QUESTION SET 2 =====
 const set2 = [
   { category: "Comprehension", question: "Read: 'The politician used pathos — sharing a personal story of loss — to connect with voters.' What is pathos?", options: ["Logical argument", "Use of statistics", "Emotional appeal", "Speaker's credibility"], answer: 2 },
   { category: "Comprehension", question: "Read: 'Her ethos was established through her 20 years of medical experience before she spoke.' What is ethos?", options: ["Emotional connection", "Logical reasoning", "Credibility and trustworthiness", "Use of examples"], answer: 2 },
@@ -187,21 +185,17 @@ const set2 = [
   { category: "Vocabulary", question: "What does 'prolific' mean?", options: ["Extremely brief", "Producing a large amount of work", "Unable to speak clearly", "Speaking in multiple languages"], answer: 1 }
 ];
 
-// ===== QUIZ LOGIC =====
 const questionSets = [set1, set2];
 const setIndex = parseInt(sessionStorage.getItem('diagSetIndex') || '0');
-const nextIndex = (setIndex + 1) % 2;
-sessionStorage.setItem('diagSetIndex', nextIndex);
-
+sessionStorage.setItem('diagSetIndex', (setIndex + 1) % 2);
 const questions = questionSets[setIndex];
 let current = 0, score = 0;
 let sectionScores = { Comprehension: 0, Grammar: 0, Pronunciation: 0, Vocabulary: 0 };
 
 document.getElementById('setBadge').textContent = `Set ${setIndex + 1} of 2`;
 
-function getCatClass(category) {
-  const map = { "Grammar": "cat-grammar", "Vocabulary": "cat-vocabulary", "Pronunciation": "cat-pronunciation", "Comprehension": "cat-comprehension" };
-  return map[category] || "cat-grammar";
+function getCatClass(c) {
+  return { "Grammar": "cat-grammar", "Vocabulary": "cat-vocabulary", "Pronunciation": "cat-pronunciation", "Comprehension": "cat-comprehension" }[c] || "cat-grammar";
 }
 
 function loadQuestion() {
@@ -211,14 +205,14 @@ function loadQuestion() {
   document.getElementById('qCategory').textContent = q.category;
   document.getElementById('qCategory').className = `q-category ${getCatClass(q.category)}`;
   document.getElementById('qText').textContent = q.question;
-  const container = document.getElementById('optionsContainer');
-  container.innerHTML = '';
+  const opts = document.getElementById('optionsContainer');
+  opts.innerHTML = '';
   q.options.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.className = 'option';
     btn.textContent = opt;
     btn.onclick = () => selectAnswer(i, btn);
-    container.appendChild(btn);
+    opts.appendChild(btn);
   });
   document.getElementById('nextBtn').style.display = 'none';
 }
@@ -226,16 +220,11 @@ function loadQuestion() {
 function selectAnswer(index, btn) {
   const q = questions[current];
   document.querySelectorAll('.option').forEach(o => o.classList.add('disabled'));
-  if (index === q.answer) {
-    btn.classList.add('correct'); score++;
-    if (sectionScores[q.category] !== undefined) sectionScores[q.category]++;
-  } else {
-    btn.classList.add('wrong');
-    document.querySelectorAll('.option')[q.answer].classList.add('correct');
-  }
-  const nextBtn = document.getElementById('nextBtn');
-  nextBtn.style.display = 'flex';
-  nextBtn.textContent = current === questions.length - 1 ? '🏁 See Results' : 'Next →';
+  if (index === q.answer) { btn.classList.add('correct'); score++; if (sectionScores[q.category] !== undefined) sectionScores[q.category]++; }
+  else { btn.classList.add('wrong'); document.querySelectorAll('.option')[q.answer].classList.add('correct'); }
+  const nb = document.getElementById('nextBtn');
+  nb.style.display = 'flex';
+  nb.textContent = current === questions.length - 1 ? '🏁 See Results' : 'Next →';
 }
 
 function nextQuestion() {
@@ -273,7 +262,7 @@ if (localStorage.getItem('dark') === 'true') {
   document.getElementById('darkToggle').textContent = '☀️';
 }
 
-const particleContainer = document.getElementById('particles');
+const diagParticles = document.getElementById('particles');
 for (let i = 0; i < 18; i++) {
   const p = document.createElement('div');
   p.className = 'particle';
@@ -282,100 +271,11 @@ for (let i = 0; i < 18; i++) {
   p.style.animationDuration = (6 + Math.random() * 8) + 's';
   p.style.width = p.style.height = (4 + Math.random() * 6) + 'px';
   p.style.opacity = 0.15 + Math.random() * 0.25;
-  particleContainer.appendChild(p);
+  diagParticles.appendChild(p);
 }
 
 loadQuestion();
 </script>
 <script type="module" src="login-widget.js"></script>
-<!-- Feedback FAB -->
-<button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
-
-<!-- Feedback Popup -->
-<div class="feedback-overlay" id="feedbackOverlay" onclick="closeFeedbackOutside(event)">
-  <div class="feedback-popup">
-    <button class="popup-close" onclick="closeFeedback()">✕</button>
-
-    <div id="popupFormState">
-      <div class="popup-title">Quick Feedback 💬</div>
-      <div class="popup-sub">Takes 30 seconds. Helps us improve!</div>
-
-      <div style="font-size:0.8rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Who are you?</div>
-      <div class="popup-role-grid">
-        <button class="popup-role-btn" onclick="selectRole(this, 'Student')">🎓<span>Student</span></button>
-        <button class="popup-role-btn" onclick="selectRole(this, 'Professional')">💼<span>Professional</span></button>
-        <button class="popup-role-btn" onclick="selectRole(this, 'Teacher')">👨‍🏫<span>Teacher</span></button>
-        <button class="popup-role-btn" onclick="selectRole(this, 'Other')">🙋<span>Other</span></button>
-      </div>
-
-      <div style="font-size:0.8rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Rate your experience</div>
-      <div class="popup-stars">
-        <button class="popup-star" onclick="setPopupRating(1)" id="ps1">⭐</button>
-        <button class="popup-star" onclick="setPopupRating(2)" id="ps2">⭐</button>
-        <button class="popup-star" onclick="setPopupRating(3)" id="ps3">⭐</button>
-        <button class="popup-star" onclick="setPopupRating(4)" id="ps4">⭐</button>
-        <button class="popup-star" onclick="setPopupRating(5)" id="ps5">⭐</button>
-      </div>
-
-      <div style="font-size:0.8rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Any suggestions?</div>
-      <textarea class="popup-textarea" id="popupSuggestion" placeholder="What can we improve?"></textarea>
-
-      <div class="popup-footer">
-        <button class="btn-primary" onclick="submitPopupFeedback()" style="flex:1;justify-content:center;padding:12px;">Submit 🚀</button>
-        <a href="feedback.html" class="popup-full-link" target="_blank">Full form →</a>
-      </div>
-    </div>
-
-    <div class="popup-success" id="popupSuccess">
-      <div class="ps-icon">🎉</div>
-      <h3 style="margin-bottom:8px;">Thank you!</h3>
-      <p>Your feedback helps us improve.</p>
-      <button class="btn-secondary" onclick="closeFeedback()" style="margin-top:16px;">Close</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  let popupRole = '';
-  let popupRating = 0;
-
-  function openFeedback() {
-    document.getElementById('feedbackOverlay').classList.add('show');
-  }
-  function closeFeedback() {
-    document.getElementById('feedbackOverlay').classList.remove('show');
-  }
-  function closeFeedbackOutside(e) {
-    if (e.target === document.getElementById('feedbackOverlay')) closeFeedback();
-  }
-  function selectRole(btn, role) {
-    popupRole = role;
-    document.querySelectorAll('.popup-role-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-  }
-  function setPopupRating(val) {
-    popupRating = val;
-    for (let i = 1; i <= 5; i++) {
-      const s = document.getElementById(`ps${i}`);
-      if (i <= val) s.classList.add('active');
-      else s.classList.remove('active');
-    }
-  }
-  function submitPopupFeedback() {
-    if (!popupRole) { alert('Please select who you are!'); return; }
-    if (!popupRating) { alert('Please give a rating!'); return; }
-    const suggestion = document.getElementById('popupSuggestion').value.trim();
-    const feedback = {
-      role: popupRole, rating: popupRating,
-      suggestion, date: new Date().toLocaleDateString('en-IN'),
-      source: 'popup'
-    };
-    const all = JSON.parse(localStorage.getItem('feedbackList') || '[]');
-    all.push(feedback);
-    localStorage.setItem('feedbackList', JSON.stringify(all));
-    document.getElementById('popupFormState').style.display = 'none';
-    document.getElementById('popupSuccess').style.display = 'block';
-  }
-</script>
 </body>
 </html>
